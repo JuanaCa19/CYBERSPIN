@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyberSpin: Classroom Edition</title>
+  
+  <!-- Google Fonts: Orbitron & Rajdhani -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet" />
+  
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- GSAP for Smooth Physics-Based Reel and Lever Animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  
+  <!-- Canvas Confetti for Celebrations -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+  <!-- Ambient Cyber Background -->
+  <div class="cyber-grid"></div>
+  <div class="scanlines"></div>
+  <div class="ambient-glow cyan-glow"></div>
+  <div class="ambient-glow magenta-glow"></div>
+
+  <!-- Main Application Wrapper -->
+  <div class="app-container">
+    
+    <!-- Top Utility Bar -->
+    <header class="top-nav">
+      <div class="brand">
+        <span class="brand-badge">CLASSROOM TOURNAMENT</span>
+        <h1 id="display-machine-title">CYBERSPIN // CLASSROOM</h1>
+      </div>
+      
+      <div class="top-controls">
+        <button id="sound-toggle-btn" class="cyber-btn icon-btn" title="Toggle Sound">
+          <span id="sound-icon">🔊</span> <span id="sound-label">AUDIO: ON</span>
+        </button>
+        <button id="settings-open-btn" class="cyber-btn neon-purple-btn" title="Open Configuration Panel">
+          ⚙ SETTINGS
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Casino Floor Arena -->
+    <main class="casino-stage">
+      
+      <!-- Slot Machine Housing -->
+      <div class="slot-machine-wrapper" id="slot-machine">
+        
+        <!-- Animated LED Bezel Ring -->
+        <div class="led-bezel" id="led-bezel">
+          <!-- 32 dynamically generated LED bulbs -->
+        </div>
+
+        <!-- Machine Cabinet Shell -->
+        <div class="machine-cabinet">
+          
+          <!-- Crown Header Marquee -->
+          <div class="machine-marquee">
+            <div class="marquee-sub">EQUAL ODDS RANDOM STUDENT SELECTOR</div>
+            <div class="marquee-status" id="marquee-text">PULL LEVER OR PRESS SPIN TO START</div>
+          </div>
+
+          <!-- Central Reel Viewport with Glassmorphism -->
+          <div class="viewport-housing">
+            <!-- Glare and Payline Laser -->
+            <div class="glass-reflection"></div>
+            <div class="payline-laser">
+              <span class="laser-arrow left">►</span>
+              <span class="laser-tag">PAYLINE</span>
+              <span class="laser-arrow right">◄</span>
+            </div>
+
+            <!-- The 3 Dynamic Reels -->
+            <div class="reels-assembly">
+              <div class="reel-column" id="reel-col-0">
+                <div class="reel-strip" id="reel-strip-0"></div>
+              </div>
+              <div class="reel-column" id="reel-col-1">
+                <div class="reel-strip" id="reel-strip-1"></div>
+              </div>
+              <div class="reel-column" id="reel-col-2">
+                <div class="reel-strip" id="reel-strip-2"></div>
+              </div>
+            </div>
+            
+            <!-- Vignette shadow for cylindrical depth -->
+            <div class="viewport-vignette"></div>
+          </div>
+
+          <!-- Live Dashboard & Statistics HUD -->
+          <div class="dashboard-hud">
+            <div class="hud-box">
+              <span class="hud-label">TOTAL SPINS</span>
+              <span class="hud-value neon-cyan" id="stat-spins">0</span>
+            </div>
+            <div class="hud-box">
+              <span class="hud-label">MATCHES (WINS)</span>
+              <span class="hud-value neon-yellow" id="stat-wins">0</span>
+            </div>
+            <div class="hud-box">
+              <span class="hud-label">MATCH RATE</span>
+              <span class="hud-value neon-magenta" id="stat-winrate">0.0%</span>
+            </div>
+            <div class="hud-box">
+              <span class="hud-label">LAST WINNER</span>
+              <span class="hud-value" id="stat-last-winner">NONE</span>
+            </div>
+          </div>
+
+          <!-- Lower Control Panel -->
+          <div class="lower-control-panel">
+            <button id="spin-main-btn" class="cyber-btn spin-cyber-btn">
+              <span class="spin-glitch-layer"></span>
+              <span class="spin-text">SPIN NOW</span>
+            </button>
+          </div>
+
+        </div> <!-- /machine-cabinet -->
+
+        <!-- 3D Mechanical Interactive Lever (Right Side) -->
+        <div class="lever-assembly" id="lever-assembly" title="Click or Drag down to Spin!">
+          <div class="lever-bracket"></div>
+          <div class="lever-socket">
+            <div class="lever-pivot-bolt"></div>
+            <div class="lever-arm-wrapper" id="lever-arm-wrapper">
+              <div class="lever-shaft"></div>
+              <div class="lever-orb" id="lever-orb">
+                <div class="orb-core"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div> <!-- /slot-machine-wrapper -->
+
+    </main>
+
+    <!-- Celebration Big-Win Overlay Banner -->
+    <div class="win-banner-overlay" id="win-banner">
+      <div class="banner-glass">
+        <h2 class="banner-title" id="banner-title">TRIPLE MATCH!</h2>
+        <div class="banner-symbol" id="banner-symbol">🎓</div>
+        <p class="banner-msg" id="banner-msg">Ada Lovelace Triad Match!</p>
+        <div class="banner-payout" id="banner-payout">WINNER SELECTED!</div>
+      </div>
+    </div>
+
+  </div> <!-- /app-container -->
+
+  <!-- ======================================================== -->
+  <!-- CONFIGURATION MODAL (Glassmorphism Classroom Settings)   -->
+  <!-- ======================================================== -->
+  <div class="modal-backdrop" id="settings-modal">
+    <div class="modal-window glass-panel">
+      
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-chip">CLASSROOM ROSTER</span>
+          <h2>⚙ MACHINE CONFIGURATION</h2>
+        </div>
+        <button id="settings-close-x" class="modal-close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- Section 1: General Machine Title -->
+        <section class="config-section">
+          <h3 class="section-heading">1. Machine Settings</h3>
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="cfg-machine-name">Machine Title</label>
+              <input type="text" id="cfg-machine-name" class="cyber-input" value="CYBERSPIN CLASSROOM EDITION" />
+            </div>
+          </div>
+        </section>
+
+        <!-- Section 2: Student Roster -->
+        <section class="config-section">
+          <div class="section-title-row">
+            <div>
+              <h3 class="section-heading">2. Classroom Roster (Equal 1/N Probability)</h3>
+              <p class="section-note">
+                All candidates have an identical chance of being selected. Default icon assigned automatically. Minimum 3 entries required.
+              </p>
+            </div>
+            <button id="add-symbol-btn" class="cyber-btn neon-cyan-btn small-btn">
+              + ADD STUDENT
+            </button>
+          </div>
+
+          <!-- Symbols Table -->
+          <div class="table-scroll-wrap">
+            <table class="cyber-table" id="symbols-config-table">
+              <thead>
+                <tr>
+                  <th style="width: 170px;">Display Mode</th>
+                  <th style="width: 80px;">Icon</th>
+                  <th>Student Name / Value</th>
+                  <th style="width: 80px; text-align: center;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="symbols-table-body">
+                <!-- Dynamically populated via script.js -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </div> <!-- /modal-body -->
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button id="cfg-reset-btn" class="cyber-btn danger-btn">↺ RESET DEFAULTS</button>
+        <div class="footer-actions-right">
+          <button id="cfg-cancel-btn" class="cyber-btn">CANCEL</button>
+          <button id="cfg-save-btn" class="cyber-btn primary-save-btn">💾 SAVE ROSTER</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
