@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>English Game Arena</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="menu/menu.css"></head>
+<body>
+<div id="bg" aria-hidden="true"></div>
+<main id="stage">
+  <header><h1 id="title" aria-label="English Game Arena">ENGLISH GAME ARENA</h1><p class="tag">Learn English. Play. Compete. Win.</p></header>
+  <section id="cards" aria-label="Games"></section>
+  <footer><button class="chip" id="howBtn">? HOW TO PLAY</button></footer>
+</main>
+<button class="gear" id="gearBtn" aria-label="Settings">⚙</button>
+<div class="modal" id="howModal" hidden><div class="box"><h2>HOW TO PLAY</h2><div id="howBody"></div><button class="play" data-close>GOT IT</button></div></div>
+<div class="modal" id="setModal" hidden><div class="box"><h2>SETTINGS</h2>
+  <label class="row"><span>Sound</span><button class="chip" id="sndBtn">ON</button></label>
+  <label class="row"><span>Volume</span><input type="range" id="vol" min="0" max="1" step=".05"></label>
+  <p class="note">Shared with English Bomb Race 3D.</p><button class="play" data-close>CLOSE</button></div></div>
+<div id="veil"><div id="veilName"></div></div>
+<script src="menu/games.js"></script>
+<script src="menu/menu.js"></script>
+</body></html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>Ruleta Inteligente de Nombres</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🎡%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <a class="arena-back" href="../../index.html?back=name-roulette">⌂ MAIN MENU</a>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <h1>Ruleta Inteligente</h1>
+        <p>Selección de nombres justa, con rondas e historial.</p>
+      </div>
+      <div class="mode-badge" id="modeBadge" role="status" aria-live="polite"></div>
+    </header>
+
+    <main class="layout">
+      <!-- ============ ESCENARIO ============ -->
+      <section class="stage" aria-label="Ruleta">
+        <div class="panel wheel-panel">
+          <div class="wheel-wrap" id="wheelWrap">
+            <div class="pointer" aria-hidden="true"></div>
+            <canvas id="wheel" role="img" aria-label="Ruleta con los nombres de los participantes"></canvas>
+          </div>
+
+          <div class="live-result" id="liveResult" role="status" aria-live="polite"></div>
+
+          <div class="spin-controls">
+            <button type="button" class="btn btn-primary btn-spin" id="spinBtn">🎡 GIRAR</button>
+            <p class="hint" id="spinHint"></p>
+          </div>
+
+          <div class="options">
+            <fieldset class="mode-select" data-lock>
+              <legend>Modo de selección</legend>
+              <label class="choice">
+                <input type="radio" name="mode" value="random" data-lock>
+                <span>🎲 Aleatorio</span>
+              </label>
+              <label class="choice">
+                <input type="radio" name="mode" value="fair" data-lock>
+                <span>⚖️ Justo</span>
+              </label>
+            </fieldset>
+
+            <div class="count-select">
+              <label for="pickCount">¿Cuántas personas quieres seleccionar?</label>
+              <select id="pickCount" data-lock>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+              </select>
+              <p class="hint warn" id="countHint"></p>
+            </div>
+          </div>
+          <p class="hint" id="modeHint"></p>
+        </div>
+
+        <div class="panel round-panel">
+          <div class="round-head">
+            <div>
+              <h2>Ronda <span id="roundNumber">1</span></h2>
+              <p id="roundProgressText" class="muted"></p>
+            </div>
+            <button type="button" class="btn btn-secondary" id="newRoundBtn" data-lock>🔄 NUEVA RONDA</button>
+          </div>
+          <div class="progress" aria-hidden="true"><div class="progress-fill" id="roundBar"></div></div>
+          <p class="banner" id="roundBanner" hidden>🎉 ¡Todos participaron! Inicia una nueva ronda para continuar.</p>
+        </div>
+      </section>
+
+      <!-- ============ LATERAL ============ -->
+      <aside class="side" aria-label="Panel de control">
+        <section class="panel">
+          <h2>Participantes <span class="count-pill" id="participantCount">0</span></h2>
+
+          <form class="add-form" id="addForm" novalidate>
+            <label for="nameInput" class="sr-only">Nombre del participante</label>
+            <input type="text" id="nameInput" placeholder="Escribe un nombre" maxlength="60" autocomplete="off" data-lock>
+            <button type="submit" class="btn btn-primary" data-lock>+ AGREGAR</button>
+          </form>
+          <p class="field-error" id="addError" role="alert"></p>
+
+          <details class="bulk">
+            <summary>Agregar varios a la vez</summary>
+            <form id="bulkForm" novalidate>
+              <label for="bulkInput" class="sr-only">Lista de nombres, uno por línea</label>
+              <textarea id="bulkInput" rows="5" placeholder="Un nombre por línea&#10;Juan&#10;María&#10;Pedro" data-lock></textarea>
+              <button type="submit" class="btn btn-secondary" data-lock>+ AGREGAR LISTA</button>
+            </form>
+          </details>
+
+          <ul class="participant-list" id="participantList"></ul>
+        </section>
+
+        <section class="panel">
+          <h2>📊 Estadísticas</h2>
+          <dl class="stats" id="stats">
+            <div><dt>Participantes</dt><dd id="statParticipants">0</dd></div>
+            <div><dt>Ronda actual</dt><dd id="statRound">1</dd></div>
+            <div><dt>Personas seleccionadas</dt><dd id="statSelected">0</dd></div>
+            <div><dt>Giros realizados</dt><dd id="statSpins">0</dd></div>
+            <div><dt>Más seleccionada</dt><dd id="statMost">—</dd></div>
+            <div><dt>Menos seleccionada</dt><dd id="statLeast">—</dd></div>
+          </dl>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Historial</h2>
+            <button type="button" class="btn btn-ghost btn-sm" id="clearHistoryBtn" data-lock>🗑 LIMPIAR HISTORIAL</button>
+          </div>
+          <ol class="history-list" id="historyList"></ol>
+        </section>
+
+        <button type="button" class="btn btn-danger btn-block" id="resetAllBtn" data-lock>🗑 RESTABLECER TODO</button>
+      </aside>
+    </main>
+  </div>
+
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <!-- Confirmación -->
+  <dialog id="confirmDialog" aria-labelledby="confirmTitle">
+    <form method="dialog" class="dialog-body">
+      <h3 id="confirmTitle"></h3>
+      <p id="confirmMessage"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-ghost" id="confirmCancel">Cancelar</button>
+        <button type="submit" class="btn btn-danger" id="confirmOk" value="ok"></button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Edición -->
+  <dialog id="editDialog" aria-labelledby="editTitle">
+    <form method="dialog" class="dialog-body" id="editForm" novalidate>
+      <h3 id="editTitle">Editar participante</h3>
+      <label for="editInput" class="sr-only">Nuevo nombre</label>
+      <input type="text" id="editInput" maxlength="60" autocomplete="off">
+      <p class="field-error" id="editError" role="alert"></p>
+      <div class="dialog-actions">
+        <button type="button" class="btn btn-ghost" id="editCancel">Cancelar</button>
+        <button type="submit" class="btn btn-primary" value="ok">Guardar cambios</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Resultado -->
+  <dialog id="resultDialog" class="result-dialog" aria-labelledby="resultTitle">
+    <canvas id="confetti" aria-hidden="true"></canvas>
+    <form method="dialog" class="dialog-body result-body">
+      <p class="result-kicker" id="resultTitle">🎉 ¡SELECCIONADO!</p>
+      <ul class="winner-list" id="winnerList"></ul>
+      <button type="submit" class="btn btn-primary" id="resultContinue">CONTINUAR</button>
+    </form>
+  </dialog>
+
+  <noscript><p class="noscript">Esta aplicación necesita JavaScript para funcionar.</p></noscript>
+
+  <script src="js/utils.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/participants.js"></script>
+  <script src="js/roulette.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
