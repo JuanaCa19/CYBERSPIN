@@ -42,6 +42,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:4px 6px;b
 </style></head><body>
 <div id="hud"></div><div id="bar"></div><div id="ov2"></div><div id="scr"></div><div id="dlg"></div>
 <script src="../../shared/participants-db.js"></script>
+<script src="../../shared/question-bank.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 "use strict";
@@ -51,9 +52,9 @@ const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random(
 const MEM={};let LSOK=true;
 const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){LSOK=false;return k in MEM?MEM[k]:d}},set(k,v){MEM[k]=v;try{localStorage.setItem(k,JSON.stringify(v));if(localStorage.getItem(k)===null)LSOK=false}catch(e){LSOK=false}}};
 try{localStorage.setItem('ebr.t','1');localStorage.removeItem('ebr.t')}catch(e){LSOK=false}
-const T=["Present Simple","Present Continuous","Past Simple","Past Continuous","Present Perfect","Future (will / going to)","Modal verbs","Comparatives and superlatives","Conditionals","Prepositions","Vocabulary","Daily routines","Food and travel","Work and studies","Conversation questions","Sentence construction","Question formation"];
+const T=ArenaQuestions.TOPICS; /* banco movido a shared/question-bank.js (compartido con Mystery Boxes) */
 const LV={e:'Easy',m:'Intermediate',h:'Hard'},LIMB=['left arm','right arm','left leg','right leg'];
-const BANK=["0|e|What time do you usually wake up?|I usually wake up at seven.","0|m|What does your best friend do on weekends?|My best friend plays soccer on weekends.","1|e|What are you doing right now?|I am answering a question.","1|m|Who is sitting next to you at the moment?|(Name) is sitting next to me.","2|m|What did you do last weekend?|I visited my grandparents.","2|e|Where did you go on your last holiday?|I went to the beach.","3|m|What were you doing at 8 pm last night?|I was watching TV.","3|h|What were you doing when the class started today?|I was talking to my friend.","4|m|Have you ever traveled to another country?|Yes, I have been to Spain.","4|h|How long have you studied English?|I have studied English for three years.","5|e|What will the weather be like tomorrow?|It will be sunny.","5|m|What are you going to do this weekend?|I am going to visit my family.","6|e|Can you swim?|Yes, I can swim.","6|m|What should you do to stay healthy?|I should eat well and exercise.","7|m|Which is bigger, a cat or a dog?|A dog is bigger than a cat.","7|h|Who is the tallest person in your family?|My father is the tallest in my family.","8|m|What will you do if it rains tomorrow?|If it rains, I will stay at home.","8|h|What would you do if you won the lottery?|If I won the lottery, I would travel the world.","9|e|Where is your phone? Use a preposition.|It is in my bag.","9|m|Complete: I was born ___ May.|in","10|e|Name three fruits in English.|Apple, banana, orange.","10|m|What is the opposite of 'expensive'?|Cheap.","11|e|What do you do after school?|I do my homework.","11|m|Describe your morning routine.|I get up, take a shower and have breakfast.","12|e|What is your favorite food?|My favorite food is pizza.","12|m|How do you usually travel to a new city?|I usually travel by bus.","13|e|What is your favorite subject?|My favorite subject is English.","13|m|What job would you like to have? Why?|I would like to be a doctor because I want to help people.","14|e|How are you today?|I'm fine, thank you.","14|m|Tell me about your family.|I have a small family with four people.","15|m|Make a sentence with the word 'because'.|I stay home because I am sick.","15|h|Make a sentence using 'although'.|Although it was cold, we went out.","16|e|Ask me a question about my age.|How old are you?","16|m|Ask a question using 'Where'.|Where do you live?"].map(s=>{const[t,l,q,a]=s.split('|');return{q,a,alts:[],topic:T[+t],level:l,kw:[],exp:''}});
+const BANK=ArenaQuestions.bank();
 const S={p:LS.get('ebr.p',[]),pid:[],q:LS.get('ebr.q',[]),cfg:Object.assign({mode:'auto',topics:T.slice(),level:'m',rep:'reset',snd:true,vol:.5},LS.get('ebr.c',{})),scr:'menu',note:'',ed:-1,qe:-1};
 S.cfg.topics=S.cfg.topics.filter(t=>T.includes(t));
 const save=()=>{LS.set('ebr.p',S.p);LS.set('ebr.q',S.q);LS.set('ebr.c',S.cfg)};
@@ -143,9 +144,7 @@ const hold=()=>!!DLG||!!(G&&G.paused),cur=()=>G.players[G.cur],canAct=p=>!p.out&
 function newGame(names){G={players:names.map((n,i)=>({i,name:n,limbs:[1,1,1,1],bombs:0,goal:false,out:false,ok:0,bad:0})),cur:-1,phase:'ready',paused:false,q:null,t:TIME,run:false,rep:false,reveal:false,w5:0,used:new Set(),res:[],msg:'',ban:'',banc:'',banId:0,over:false,win:[]};sig=''}
 function startGame(names){tasks.length=0;DLG=null;buildWorld(names);newGame(names);S.scr='';R();SFX.start()}
 function ban(t,c){const id=++G.banId;G.ban=t;G.banc=c||'y';later(2.3,()=>{if(G&&G.banId===id)G.ban=''})}
-function pickQ(){const man=S.cfg.mode==='manual'&&S.q.length,A=man?S.q:BANK.filter(q=>S.cfg.topics.includes(q.topic)&&q.level===S.cfg.level),B=man?S.q:BANK.filter(q=>S.cfg.topics.includes(q.topic));
- for(const L of[A,B,BANK]){const f=L.filter(q=>!G.used.has(q.q));if(f.length){const q=f[Math.random()*f.length|0];G.used.add(q.q);return q}}
- G.used.clear();const L=A.length?A:BANK,q=L[Math.random()*L.length|0];G.used.add(q.q);return q}
+function pickQ(){return ArenaQuestions.pick(S.cfg,S.q,G.used)}
 function nextIdx(){for(let k=1;k<=3;k++){const c=(G.cur+k)%3;if(canAct(G.players[c]))return c}return -1}
 function startTurn(){if(!G||G.over||G.phase!=='ready'||hold())return;const n=nextIdx();if(n<0){finish();return}
  G.cur=n;const p=cur();G.phase='moving';G.q=null;G.msg=esc(p.name)+"'s turn: walking...";focus=n;chars[n].set('walk');chars[n].walkTo(p.bombs<3?BZ[p.bombs]+STOP:GZ,()=>arrive(p))}

@@ -12,13 +12,13 @@ h1 i.sp{width:.3em}
 .tag{margin:1vh 0 0;font-size:clamp(14px,1.9vw,24px);color:#bcd3ff;opacity:0;animation:fade .8s .9s forwards}
 @keyframes fade{to{opacity:1}}
 #cards{display:flex;gap:3vw;justify-content:center;align-items:stretch;width:100%;perspective:1100px;flex:1;min-height:0;margin:2vh 0}
-.card{--c:#fff;--rx:0deg;--ry:0deg;position:relative;width:min(40vw,520px);max-height:100%;border-radius:26px;padding:2.2vh 1.8vw;display:flex;flex-direction:column;align-items:center;text-align:center;gap:1vh;
+.card{--c:#fff;--rx:0deg;--ry:0deg;position:relative;width:min(29vw,440px);max-height:100%;border-radius:26px;padding:2.2vh 1.8vw;display:flex;flex-direction:column;align-items:center;text-align:center;gap:1vh;
  background:linear-gradient(160deg,#1b2f70e6,#0e1a45f2);border:3px solid var(--c);box-shadow:0 14px 36px #0009,inset 0 0 40px #ffffff10;
  transform:rotateX(var(--rx)) rotateY(var(--ry));transform-style:preserve-3d;transition:transform .25s,box-shadow .25s;opacity:0;animation:slide .7s cubic-bezier(.2,1,.3,1) forwards}
-.card:nth-child(1){animation-delay:.5s}.card:nth-child(2){animation-delay:.7s}
+.card:nth-child(1){animation-delay:.5s}.card:nth-child(2){animation-delay:.7s}.card:nth-child(3){animation-delay:.9s}
 @keyframes slide{from{opacity:0;transform:translateY(60px) scale(.9)}to{opacity:1}}
 .card:hover,.card.on{transform:translateY(-10px) scale(1.04) rotateX(var(--rx)) rotateY(var(--ry));box-shadow:0 26px 50px #000b,0 0 40px var(--c)}
-.card h2{margin:0;font-size:clamp(18px,2.4vw,32px);color:var(--c);text-shadow:0 3px 8px #000}
+.card h2{margin:0;font-size:clamp(16px,1.9vw,28px);color:var(--c);text-shadow:0 3px 8px #000}
 .card p{margin:0;font-size:clamp(13px,1.3vw,18px);color:#d4e2ff;font-weight:600}
 .art{flex:1;min-height:0;width:100%;position:relative;display:flex;align-items:center;justify-content:center;transform:translateZ(40px)}
 .play{font:900 clamp(16px,1.8vw,24px) system-ui;padding:1.3vh 2.6vw;border:0;border-radius:16px;background:var(--y);color:#111;cursor:pointer;box-shadow:0 6px 0 #b58900,0 10px 18px #0008;transition:transform .15s,box-shadow .15s}
@@ -32,6 +32,16 @@ h1 i.sp{width:.3em}
 .bomb:after{content:"";position:absolute;top:-24%;left:42%;width:16%;aspect-ratio:1;border-radius:50%;background:#ffa000;box-shadow:0 0 14px #ffa000;animation:spark .5s infinite alternate}
 .q{position:absolute;top:0;padding:4px 10px;border-radius:10px;background:#fffe;color:#111;font-size:clamp(10px,1.1vw,14px)}
 @keyframes float{50%{transform:translateY(-12px) rotate(4deg)}}@keyframes spark{to{transform:scale(1.5)}}
+/* art: mystery box */
+.mb{position:relative;width:clamp(90px,15vh,150px);aspect-ratio:1;animation:float 2.8s ease-in-out infinite;margin-top:2vh}
+.mb-body{position:absolute;left:8%;right:8%;bottom:0;height:58%;border-radius:8px;background:linear-gradient(90deg,#8a3dff,#b26bff 50%,#8a3dff);box-shadow:0 12px 20px #0009,inset 0 -10px 0 #0003;display:flex;align-items:center;justify-content:center}
+.mb-body b{font-size:clamp(26px,5vh,52px);color:var(--y);text-shadow:0 0 14px #ffd23f}
+.mb-lid{position:absolute;left:2%;right:2%;bottom:56%;height:22%;border-radius:8px;background:#c79bff;border-bottom:4px solid var(--y);transform-origin:left bottom;animation:lid 2.8s ease-in-out infinite;z-index:2}
+.mb-lid:after{content:"";position:absolute;left:45%;top:0;bottom:0;width:10%;background:var(--y)}
+.mb-glow{position:absolute;left:20%;right:20%;bottom:70%;height:70%;background:linear-gradient(transparent,#ffd23fcc);filter:blur(8px);opacity:.5;animation:glo 2.8s ease-in-out infinite}
+.mb s{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--y);box-shadow:0 0 10px var(--y);animation:spark 1s infinite alternate}
+.mb .sp1{left:-6%;top:20%}.mb .sp2{right:-4%;top:8%;animation-delay:.3s}.mb .sp3{left:40%;top:-8%;animation-delay:.6s}
+@keyframes lid{40%,60%{transform:rotate(-14deg) translateY(-4px)}}@keyframes glo{40%,60%{opacity:1}}
 /* art: wheel */
 .wheel{width:clamp(90px,17vh,170px);aspect-ratio:1;border-radius:50%;border:5px solid #fff;background:conic-gradient(var(--r) 0 20%,var(--y) 0 40%,var(--g) 0 60%,var(--blue) 0 80%,#c06bff 0);animation:spin 14s linear infinite;box-shadow:0 10px 20px #0008}
 .ptr{position:absolute;top:6%;left:50%;margin-left:-9px;border:9px solid transparent;border-top:18px solid #fff}

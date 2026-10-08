@@ -18,6 +18,7 @@ const WORDS=['A','B','C','?','!','ABC','ENGLISH','PLAY','WIN','Hello','Quiz','Go
 const ART={
  bomb:()=>'<div class="lanes"><b style="--lc:#ff5a5a"></b><b style="--lc:#3d9bff"></b><b style="--lc:#35d07f"></b></div><div class="q">What time do you wake up?</div><div class="bomb"></div>',
  wheel:()=>'<div class="wheel"></div><div class="ptr"></div>',
+ mystery:()=>'<div class="mb"><i class="mb-glow"></i><div class="mb-lid"></div><div class="mb-body"><b>?</b></div><s class="sp1"></s><s class="sp2"></s><s class="sp3"></s></div>',
  icon:g=>`<div class="big">${g.icon}</div>`};
 const cards=$('#cards');
 GAMES.forEach(g=>{const el=document.createElement('article');el.className='card';el.style.setProperty('--c',g.color);el.dataset.id=g.id;

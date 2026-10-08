@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Mystery Boxes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="stylesheet" href="css/mystery.css"></head>
+<body>
+<canvas id="stage3d" aria-label="Mystery boxes 3D stage"></canvas>
+
+<header id="hud" aria-label="Round status">
+  <div class="hl"><button class="btn s" data-a="menu" id="menuBtn">⌂ MAIN MENU</button></div>
+  <div class="hc">
+    <h1 id="ttl">MYSTERY BOXES</h1>
+    <div class="chips" id="chips" hidden>
+      <span class="chip">ROUND: <b id="cRound">1</b></span>
+      <span class="chip hot">STUDENTS LEFT: <b id="cLeft">0</b></span>
+      <span class="chip">SELECTED: <b id="cSel">0</b> / <b id="cTot">0</b></span>
+    </div>
+  </div>
+  <div class="hr">
+    <button class="btn s" data-a="snd" id="sndBtn" aria-label="Sound">🔊</button>
+    <button class="btn s" data-a="res" id="resBtn" hidden>📋 RESULTS</button>
+    <button class="btn s r" data-a="end" id="endBtn" hidden>END ROUND</button>
+  </div>
+</header>
+
+<div id="banner" aria-live="polite"></div>
+<aside id="results" hidden><div class="rh" data-a="res">ROUND RESULTS <span id="rCount">(0)</span></div><div id="rBody"></div></aside>
+<div id="dock"></div>
+<div id="screen" hidden></div>
+<div id="dlg" hidden></div>
+<div id="toast" role="status"></div>
+<div id="nogl" hidden><div class="card c"><h2>3D not available</h2><p class="mu">Could not start WebGL / Three.js. Check your connection (Three.js loads from a CDN the first time) and use a modern browser.</p><a class="btn y" href="../../index.html?back=mystery-boxes">⌂ MAIN MENU</a></div></div>
+
+<script src="../../shared/participants-db.js"></script>
+<script src="../../shared/question-bank.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="js/roundManager.js"></script>
+<script src="js/studentManager.js"></script>
+<script src="js/questionManager.js"></script>
+<script src="js/audioManager.js"></script>
+<script src="js/resultManager.js"></script>
+<script src="js/boxManager.js"></script>
+<script src="js/uiManager.js"></script>
+<script src="js/game.js"></script>
+</body></html>
