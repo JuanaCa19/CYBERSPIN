@@ -1,0 +1,13 @@
+{
+  "rules": {
+    "english-game-arena": {
+      "participants": {
+        ".read": true,
+        ".write": true,
+        "$id": {
+          ".validate": "newData.hasChildren(['name','createdAt']) && newData.child('name').isString() && newData.child('name').val().length > 0 && newData.child('name').val().length <= 40"
+        }
+      }
+    }
+  }
+}

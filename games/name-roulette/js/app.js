@@ -2,7 +2,7 @@
 (function (RN) {
   'use strict';
 
-  const { h, wait, formatDateTime, cleanName } = RN.utils;
+  const { h, wait, formatDateTime, cleanName, nameKey } = RN.utils;
   const P = RN.participants;
   const S = RN.storage;
 
@@ -18,12 +18,39 @@
   };
 
   const ui = { busy: false, saveWarned: false };
+  let pendingList = null; // cambios remotos recibidos mientras la ruleta gira
+  let legacy = [];        // participantes locales previos (para conservar sus conteos al migrar)
   const els = {};
   let state;
   let wheel;
 
   const $ = (id) => document.getElementById(id);
   const colorFor = (index) => `hsl(${Math.round((index * 137.508 + 210) % 360)}, 68%, 42%)`;
+
+
+  /* ---------------- Participantes compartidos (Firebase) ---------------- */
+
+  function dbMessage(result) {
+    switch (result && result.error) {
+      case 'duplicate': return `"${result.name || 'Ese nombre'}" ya está en la lista.`;
+      case 'empty': return 'El nombre no puede estar vacío.';
+      case 'limit': return `Máximo ${ArenaDB.MAX_ITEMS} participantes.`;
+      case 'permission-denied': return 'Firebase rechazó la operación: revisa las reglas de la base de datos.';
+      default: return 'No hay conexión con la base de datos. Inténtalo de nuevo.';
+    }
+  }
+
+  /** La lista de nombres viene de la nube; los conteos (veces elegido, ronda) se conservan localmente. */
+  function applyRemoteList(list) {
+    if (ui.busy) { pendingList = list; return; }
+    const byId = new Map(state.participants.map((p) => [p.id, p]));
+    const byName = new Map([...legacy, ...state.participants].map((p) => [nameKey(p.name), p]));
+    state.participants = list.map((r) => {
+      const old = byId.get(r.id) || byName.get(nameKey(r.name));
+      return { id: r.id, name: r.name, picks: old ? old.picks : 0, doneRound: old ? old.doneRound : null };
+    });
+    commit();
+  }
 
   /* ---------------- Avisos (toasts) ---------------- */
 
@@ -299,23 +326,30 @@
       toast('Ocurrió un error durante el giro. Puedes intentarlo de nuevo.', 'error');
     } finally {
       setBusy(false);
+      if (pendingList) { const queued = pendingList; pendingList = null; applyRemoteList(queued); }
       if (P.isRoundComplete(state)) toast('🎉 ¡Todos participaron! Puedes iniciar una nueva ronda.', 'success');
     }
   }
 
-  function handleAdd(event) {
+  async function handleAdd(event) {
     event.preventDefault();
     if (ui.busy) return;
-    const result = P.add(state, els.nameInput.value);
+    const check = P.validateName(state, els.nameInput.value);
+    if (!check.ok) {
+      els.addError.textContent = check.error;
+      els.nameInput.setAttribute('aria-invalid', 'true');
+      els.nameInput.focus();
+      return;
+    }
+    const result = await ArenaDB.add(check.name);
     if (!result.ok) {
-      els.addError.textContent = result.error;
+      els.addError.textContent = dbMessage(result);
       els.nameInput.setAttribute('aria-invalid', 'true');
       els.nameInput.focus();
       return;
     }
     els.nameInput.value = '';
     clearAddError();
-    commit();
     toast(`"${result.name}" se agregó a la ruleta.`, 'success');
     els.nameInput.focus();
   }
@@ -325,11 +359,13 @@
     els.nameInput.removeAttribute('aria-invalid');
   }
 
-  function handleBulkAdd(event) {
+  async function handleBulkAdd(event) {
     event.preventDefault();
     if (ui.busy) return;
     if (!els.bulkInput.value.trim()) return toast('Pega al menos un nombre (uno por línea).', 'error');
-    const r = P.addMany(state, els.bulkInput.value);
+    const lines = els.bulkInput.value.split(/\r?\n/).filter((line) => line.trim() !== '');
+    const r = await ArenaDB.addMany(lines);
+    if (r.failed) return toast(dbMessage({ error: r.error }), 'error');
     const notes = [];
     if (r.duplicates) notes.push(`${r.duplicates} repetido${r.duplicates > 1 ? 's' : ''}`);
     if (r.invalid) notes.push(`${r.invalid} no válido${r.invalid > 1 ? 's' : ''}`);
@@ -337,7 +373,6 @@
     const extra = notes.length ? ` (omitidos: ${notes.join(', ')})` : '';
     if (!r.added) return toast(`No se agregó ningún nombre${extra}.`, 'error');
     els.bulkInput.value = '';
-    commit();
     toast(`Se agregaron ${r.added} participante${r.added > 1 ? 's' : ''}${extra}.`, notes.length ? 'warn' : 'success');
   }
 
@@ -350,22 +385,21 @@
     if (button.dataset.action === 'edit') {
       const newName = await editDialog(participant);
       if (newName === null || newName === participant.name) return;
-      const result = P.rename(state, participant.id, newName);
-      if (!result.ok) return toast(result.error, 'error');
-      commit();
+      const result = await ArenaDB.rename(participant.id, newName);
+      if (!result.ok) return toast(dbMessage(result), 'error');
       toast('Nombre actualizado.', 'success');
     } else if (button.dataset.action === 'delete') {
       const isLast = state.participants.length === 1;
       const confirmed = await confirmDialog({
         title: `¿Eliminar a ${participant.name}?`,
         message: isLast
-          ? 'Es el último participante: la ruleta quedará vacía. Su historial se conserva.'
-          : 'Dejará de aparecer en la ruleta. Su historial se conserva.',
+          ? 'Es el último participante: la lista quedará vacía. Se elimina también de los demás juegos. Su historial se conserva.'
+          : 'Dejará de aparecer en la ruleta y en los demás juegos. Su historial se conserva.',
         okText: 'Eliminar',
       });
       if (!confirmed || ui.busy) return;
-      P.remove(state, participant.id);
-      commit();
+      const result = await ArenaDB.remove(participant.id);
+      if (!result.ok) return toast(dbMessage(result), 'error');
       toast(`"${participant.name}" fue eliminado.`, 'success');
     }
   }
@@ -405,12 +439,14 @@
     if (ui.busy) return;
     const confirmed = await confirmDialog({
       title: '¿Restablecer todo?',
-      message: 'Se borrarán participantes, historial, rondas, estadísticas y configuración. Esta acción no se puede deshacer.',
+      message: 'Se borrarán historial, rondas, conteos, estadísticas y configuración. La lista de participantes guardada en la nube se conserva. Esta acción no se puede deshacer.',
       okText: 'Restablecer todo',
     });
     if (!confirmed || ui.busy) return;
     S.clear();
     state = S.defaultState();
+    legacy = [];
+    state.participants = ArenaDB.list().map((r) => ({ id: r.id, name: r.name, picks: 0, doneRound: null }));
     wheel.resetRotation();
     setLiveResult('');
     commit();
@@ -471,6 +507,17 @@
     wheel = new RN.Roulette($('wheel'));
     bindEvents();
     render();
+    legacy = state.participants.slice();
+    ArenaDB.mountBadge();
+    let wasOffline = false;
+    ArenaDB.onStatus((st) => {
+      if (st === 'offline' && !wasOffline) toast('Sin conexión a la base de datos. Se muestra la última copia guardada.', 'warn');
+      wasOffline = st === 'offline';
+    });
+    ArenaDB.onChange(applyRemoteList);
+    ArenaDB.migrateOnce(legacy.map((p) => p.name)).then((n) => {
+      if (n) toast(`${n} participante${n > 1 ? 's' : ''} de este navegador se subieron a la nube.`, 'success');
+    });
     if (loaded.recovered) toast('Los datos guardados estaban dañados y se restablecieron.', 'warn');
     if (!loaded.available) toast('El almacenamiento local no está disponible: no se guardarán los cambios.', 'warn');
   }
