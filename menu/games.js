@@ -1,4 +1,4 @@
-/* GAME CONFIG — to add a game: copy one entry, set path and art ('bomb' | 'wheel' | 'icon'). */
+/* GAME CONFIG — to add a game: copy one entry, set path and art ('bomb' | 'wheel' | 'icon' | 'mystery' | 'dart'). */
 window.GAMES = [
   { id:"bomb-race", title:"ENGLISH BOMB RACE 3D", description:"Three players. Three tracks. Three bombs. Can you survive?",
     path:"games/bomb-race/index.html", icon:"💣", color:"#ff4d4d", art:"bomb",
@@ -8,5 +8,8 @@ window.GAMES = [
     how:"Add your students, press GIRAR and the wheel picks 1–5 names. Fair mode lowers the odds of those already picked. Nobody repeats within a round." },
   { id:"mystery-boxes", title:"MYSTERY BOXES", description:"Pick students at random from mystery boxes and test their English.",
     path:"games/mystery-boxes/index.html", icon:"🎁", color:"#b26bff", art:"mystery",
-    how:"Add your students and press START ROUND: the 3D boxes shuffle and one opens to reveal a student, who answers an English question out loud. The teacher marks CORRECT or INCORRECT. A student who has been picked is out for the rest of the round; PLAY AGAIN starts a fresh round with everybody." }
+    how:"Add your students and press START ROUND: the 3D boxes shuffle and one opens to reveal a student, who answers an English question out loud. The teacher marks CORRECT or INCORRECT. A student who has been picked is out for the rest of the round; PLAY AGAIN starts a fresh round with everybody." },
+  { id:"student-dart", title:"STUDENT DART", description:"Throw the dart at the board and see which student gets picked.",
+    path:"games/student-dart/index.html", icon:"🎯", color:"#2ee6a6", art:"dart",
+    how:"Add your students and press THROW DART: the board spins, the dart hits and a student is selected, then answers an English question out loud. The teacher marks CORRECT or INCORRECT. A picked student leaves the board until the round ends; PLAY AGAIN brings everybody back." }
 ];
