@@ -1,0 +1,290 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>English UNO — Play, Learn & Win</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🃏%3C/text%3E%3C/svg%3E">
+<style>
+:root{--bg1:#16285f;--bg2:#0a1230;--fg:#fff;--pn:#16275f;--bd:#ffffff33;--ac:#2d7bff;--y:#ffd23f;--g:#35d07f;--r:#ff4d4d}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px);background:var(--bg2)}
+body{margin:0;min-height:100vh;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color:var(--fg);background:radial-gradient(ellipse at 50% 20%,var(--bg1),var(--bg2) 70%) fixed;font:700 16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+:focus-visible{outline:3px solid var(--y);outline-offset:2px}
+.wrap{max-width:1000px;margin:0 auto;padding:12px}
+header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;padding:8px 12px;max-width:1000px;margin:0 auto}
+header b{font-size:1.15rem;letter-spacing:.06em;color:var(--y);text-shadow:0 2px 0 #8a5f00,0 6px 12px #0008}
+h1{font-size:clamp(2rem,8vw,3.6rem);margin:.3em 0 0;text-align:center;letter-spacing:.04em;color:var(--y);text-shadow:0 2px 0 #c98f00,0 5px 0 #8a5f00,0 14px 24px #000a}
+h2{color:var(--y);margin:.2em 0 .4em}h3{color:#bcd3ff;margin:.8em 0 .3em}
+.sub{text-align:center;font-weight:800;letter-spacing:.2em;margin:0 0 18px;color:#bcd3ff}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:16px}
+.mode{--mc:var(--y);background:linear-gradient(160deg,#1b2f70e6,#0e1a45f2);border:3px solid var(--mc);border-radius:22px;padding:16px;text-align:left;color:#fff;font:inherit;cursor:pointer;display:flex;flex-direction:column;gap:4px;box-shadow:0 12px 30px #0009,inset 0 0 40px #ffffff10;transition:transform .2s,box-shadow .2s}
+.mode:hover,.mode:focus-visible{transform:translateY(-6px) scale(1.02);box-shadow:0 20px 40px #000b,0 0 32px var(--mc)}
+.mode span{font-size:2.2rem}.mode b{color:var(--mc);font-size:1.15rem;text-shadow:0 3px 8px #000}.mode small{color:#d4e2ff;font-weight:600;font-size:.9rem}
+.btn{background:var(--y);color:#111;border:0;border-radius:14px;padding:10px 18px;font:900 1rem system-ui,-apple-system,"Segoe UI",Arial,sans-serif;cursor:pointer;margin:4px;box-shadow:0 5px 0 #b58900,0 8px 14px #0008;transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 7px 0 #b58900,0 0 22px #ffd23f88}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #b58900}
+.btn.ghost{background:#ffffff1a;color:#fff;border:2px solid #ffffff55;box-shadow:none;border-radius:99px;padding:8px 16px;font-weight:800;font-size:.9rem}
+.btn.ghost:hover{background:#ffffff33;transform:none;box-shadow:none}
+.btn.red{background:var(--r);color:#fff;box-shadow:0 5px 0 #a01f1f,0 8px 14px #0008}
+.btn.red:hover{box-shadow:0 7px 0 #a01f1f,0 0 22px #ff4d4d88}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.note{font-size:.85rem;font-weight:600;color:#bcd3ff}
+.panel{background:linear-gradient(160deg,#1b2f70e6,#0e1a45f2);border:2px solid #ffffff33;border-radius:22px;padding:16px;margin:10px 0;box-shadow:0 14px 36px #0009,inset 0 0 40px #ffffff10}
+label{display:block;font-weight:700;margin:8px 0 3px;color:#dbe7ff}
+input,select,textarea{font:600 1rem system-ui,-apple-system,"Segoe UI",Arial,sans-serif;padding:9px 12px;border:2px solid #fff5;border-radius:12px;background:#0006;color:#fff;width:100%;max-width:520px}
+select option{background:#16275f;color:#fff}
+input::placeholder,textarea::placeholder{color:#9fb0e0}
+input[type=checkbox]{width:auto;accent-color:var(--y)}.chk{display:inline-flex;gap:6px;align-items:center;margin:3px 10px 3px 0;font-weight:600}
+.opps{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.op{background:#ffffff14;border:2px solid #ffffff33;border-radius:14px;padding:6px 10px;min-width:92px;text-align:center;font-size:.85rem}
+.op.on{border-color:var(--y);box-shadow:0 0 0 3px #ffd23f55,0 0 18px #ffd23f66}
+.table{background:radial-gradient(circle,#1f7a4d,#145536);border:3px solid #ffffff33;border-radius:24px;padding:18px 10px;margin:12px 0;display:flex;gap:16px;justify-content:center;align-items:center;flex-wrap:wrap;color:#fff;box-shadow:0 14px 36px #0009,inset 0 0 40px #0004}
+.status{text-align:center;font-weight:700;min-height:2.6em;color:#dbe7ff}
+.card{width:64px;height:96px;border-radius:10px;border:3px solid #fff;color:#fff;font-weight:800;display:inline-flex;align-items:center;justify-content:center;font-size:1.5rem;margin:3px;cursor:pointer;box-shadow:0 3px 8px #0004;transition:transform .15s;animation:pop .3s}
+.card i{font-style:normal;background:#fff3;border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center}
+.red{background:#e53935}.blue{background:#1e88e5}.green{background:#43a047}.yellow{background:#fdd835;color:#222}.wild{background:conic-gradient(#e53935 0 25%,#1e88e5 0 50%,#43a047 0 75%,#fdd835 0)}
+.hand .card:not(.pl){opacity:.55}.hand .card.pl:hover{transform:translateY(-12px)}.pile{background:#222}
+.cc{width:28px;height:28px;border-radius:50%;border:3px solid #fff}
+@keyframes pop{from{transform:scale(.6);opacity:0}}
+.ov{position:fixed;inset:0;background:#050a1ccc;display:flex;align-items:center;justify-content:center;padding:12px;z-index:9;overflow:auto}
+.dlg{background:var(--pn);border:3px solid var(--y);border-radius:22px;padding:20px;max-width:560px;width:100%;max-height:100%;overflow:auto;color:#dbe7ff;box-shadow:0 20px 50px #000b;animation:pop .3s both}
+.opt{display:block;width:100%;text-align:left;margin:6px 0;padding:10px 14px;border:2px solid #ffffff44;border-radius:12px;background:#ffffff14;color:#fff;font:700 1rem system-ui,-apple-system,"Segoe UI",Arial,sans-serif;cursor:pointer}
+.opt:hover{border-color:var(--y);background:#ffffff26}
+.chip{display:inline-block;padding:6px 12px;margin:3px;border:2px solid var(--ac);border-radius:20px;background:#ffffff14;color:#fff;font:700 1rem system-ui,-apple-system,"Segoe UI",Arial,sans-serif;cursor:pointer}
+.chip:hover{background:#2d7bff44}
+.bar{height:8px;background:#ffffff22;border-radius:4px;overflow:hidden}.bar div{height:100%;background:var(--g);transition:width .25s linear}
+.good{color:var(--g);font-weight:800}.bad{color:#ff7b7b;font-weight:800}
+.tb{width:100%;border-collapse:collapse;font-size:.9rem}.tb td,.tb th{border-bottom:1px solid #ffffff22;padding:5px;text-align:left}.tb th{color:var(--y)}
+.tbx{overflow-x:auto}#toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#050a1cf0;color:#fff;border:2px solid var(--y);padding:8px 16px;border-radius:20px;z-index:20;display:none;max-width:90%;box-shadow:0 8px 24px #000a}
+@media(max-width:560px){.card{width:52px;height:78px;font-size:1.2rem}.card i{width:34px;height:34px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+</style></head><body><div id="app"></div><div id="toast" role="status" aria-live="polite"></div>
+<script src="../../shared/participants-db.js"></script>
+<script>
+'use strict';
+const COLORS=['red','blue','green','yellow'],CATS=['Vocabulary','Grammar','Verb Tenses','Spelling','Sentence Building','Reading Comprehension','Everyday English','Phrasal Verbs'];
+const LV=['','Beginner','Elementary','Intermediate','Advanced'],TY={mc:'Multiple choice',tf:'True / False',fill:'Fill in the blank',build:'Sentence building',short:'Short answer'};
+const $=id=>document.getElementById(id),rnd=n=>Math.floor(Math.random()*n),shuf=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=s=>String(s).toLowerCase().replace(/[’‘]/g,"'").replace(/[^a-z0-9' ]/g,' ').replace(/\s+/g,' ').trim();
+const BANK=[
+[0,1,'mc',"What is the opposite of 'hot'?",['cold','warm','big','fast'],'cold'],
+[0,2,'mc',"Which word means 'very tired'?",['exhausted','excited','enormous','anxious'],'exhausted'],
+[0,2,'tf',"'Enormous' means very big.",0,'True'],
+[0,3,'mc',"'Reluctant' means...",['unwilling','eager','careful','wealthy'],'unwilling'],
+[0,4,'mc',"Which phrase is closest in meaning to 'ubiquitous'?",['found everywhere','very rare','extremely old','hard to see'],'found everywhere'],
+[1,1,'mc','She ___ a student.',['is','are','am','be'],'is'],
+[1,1,'short',"What is the plural of 'child'?",0,'children'],
+[1,2,'fill','There ___ two apples on the table. (is / are)',0,'are'],
+[1,2,'tf',"'He don't like coffee' is grammatically correct.",0,'False'],
+[1,3,'mc','If I ___ you, I would study more.',['were','am','will be','have been'],'were'],
+[1,4,'mc','Hardly ___ the room when the phone rang.',['had she entered','she had entered','did she entered','she entered'],'had she entered'],
+[2,1,'fill','Yesterday I ___ (go) to school.',0,'went'],
+[2,2,'mc','They ___ TV right now.',['are watching','watch','watched','have watching'],'are watching'],
+[2,2,'tf',"'I have seen him yesterday' is correct English.",0,'False'],
+[2,3,'fill','She ___ (live) in Lima since 2015. Use the present perfect.',0,'has lived'],
+[2,4,'mc','By next June, he ___ here for ten years.',['will have worked','will work','has worked','works'],'will have worked'],
+[3,1,'mc','Choose the correct spelling.',['friend','freind','frend','friand'],'friend'],
+[3,2,'mc','Choose the correct spelling.',['necessary','neccessary','necesary','necessery'],'necessary'],
+[3,3,'short',"Spell the word: a place where books are kept (starts with L).",0,'library'],
+[3,4,'mc','Choose the correct spelling.',['accommodation','acommodation','accomodation','acommodatoin'],'accommodation'],
+[4,1,'build','Put the words in the correct order.',0,'I like pizza.'],
+[4,2,'build','Put the words in the correct order.',0,'She is reading a book.'],
+[4,3,'build','Put the words in the correct order.',0,'We have lived here for five years.'],
+[4,4,'build','Put the words in the correct order.',0,'Had I known earlier, I would have helped you.'],
+[5,1,'tf',"Read: 'Tom has a dog named Max. Max is brown.' — Max is brown.",0,'True'],
+[5,2,'mc',"Read: 'Ana wakes up at 6, runs for 30 minutes, and then has breakfast.' What does Ana do after running?",['Has breakfast','Wakes up','Goes to school','Sleeps'],'Has breakfast'],
+[5,3,'tf',"Read: 'Although it rained, the match went ahead.' — The match was cancelled.",0,'False'],
+[5,4,'mc',"Read: 'The proposal, albeit ambitious, lacked funding.' What is the main problem?",['Not enough money','It was too small','Nobody read it','It was illegal'],'Not enough money'],
+[6,1,'mc','How do you greet someone at 9 a.m.?',['Good morning','Good night','Goodbye','See you'],'Good morning'],
+[6,2,'mc','At a restaurant: "___ I have the menu, please?"',['Can','Do','Are','Is'],'Can'],
+[6,2,'short','Complete: Nice to ___ you. (first meeting)',0,'meet'],
+[6,3,'mc',"Before your exam someone says 'Break a leg!' It means...",['Good luck','Be careful','Run away',"I'm angry"],'Good luck'],
+[6,4,'mc',"'It's not my cup of tea' means...",["I don't really like it",'It is too hot','I want some tea','It is expensive'],"I don't really like it"],
+[7,1,'fill','Turn ___ the lights when you leave. (on / off)',0,'off'],
+[7,2,'mc',"'Give up' means...",['stop trying','start','win','give a gift'],'stop trying'],
+[7,3,'mc',"I can't find my keys. I need to ___ them.",['look for','look after','look up','look into'],'look for'],
+[7,3,'short','Complete: Can you pick me ___ at the station?',0,'up'],
+[7,4,'mc','The meeting was ___ because of the storm.',['called off','called on','called at','called in'],'called off']];
+const DEF={cats:[...CATS],lv:[1,2,3,4],timer:20,pts:10,rew:1,pen:2,hand:7,quiz:true};
+let DB;try{DB=JSON.parse(localStorage.getItem('eu_v1'))}catch(e){DB=null}
+if(!DB||!Array.isArray(DB.B)||!DB.cfg)DB={B:BANK.map((r,i)=>({id:i+1,c:CATS[r[0]],l:r[1],t:r[2],q:r[3],o:r[4]||null,a:r[5]})),R:[],cfg:{...DEF}};
+DB.R=DB.R||[];const save=()=>{try{localStorage.setItem('eu_v1',JSON.stringify(DB))}catch(e){}};
+let S={scr:'menu',tab:'set'},G=null,Q=null,P=null,D=null;const used=new Set();
+function toast(m){const t=$('toast');t.textContent=m;t.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>t.style.display='none',2600)}
+const err=m=>{toast(m);return false};
+/* ---------- questions ---------- */
+function pick(cat,lv,ex){const c=DB.cfg;let pool=DB.B.filter(q=>c.cats.includes(q.c)&&c.lv.includes(q.l)&&(!cat||q.c===cat)&&(!lv||q.l===lv)&&q.id!==ex);
+ if(!pool.length)return null;let f=pool.filter(q=>!used.has(q.id));if(!f.length){pool.forEach(q=>used.delete(q.id));f=pool}
+ const q=f[rnd(f.length)];used.add(q.id);return q}
+function check(q,g){if(q.t==='mc'||q.t==='tf')return g===q.a;if(q.t==='build')return norm(g)===norm(q.a);return q.a.split('|').map(norm).includes(norm(g))}
+function ask(name,q,cb,pr){if(Q)clearInterval(Q.t);const t=DB.cfg.timer,w=q.t==='build'?q.a.split(/\s+/):null;let ord=w?w.map((_,i)=>i):null;
+ if(ord){for(let k=0;k<5;k++){ord=shuf(ord);if(ord.some((v,i)=>v!==i))break}}
+ Q={q,name,cb,pr,done:false,sel:[],w,ord,opts:q.t==='mc'?shuf(q.o):q.t==='tf'?['True','False']:null,dl:t?Date.now()+t*1000:0};
+ if(t)Q.t=setInterval(()=>{if(!Q||Q.done)return;const l=Math.max(0,Q.dl-Date.now()),e=$('tm');if(e)e.firstChild.style.width=(l/(t*10))+'%';if(e)e.nextSibling.textContent=Math.ceil(l/1000)+'s';if(l<=0)submit(null)},250);
+ render()}
+function submit(g){if(!Q||Q.done)return;Q.done=true;clearInterval(Q.t);const q=Q.q;Q.to=g===null;Q.ok=!Q.to&&check(q,g);
+ DB.R.push({d:Date.now(),p:Q.name,c:q.c,l:q.l,ok:Q.ok});if(DB.R.length>3000)DB.R.shift();save();render()}
+/* ---------- engine ---------- */
+const topC=()=>G.disc[G.disc.length-1],next=(i,s=0)=>{const n=G.players.length;return(((i+G.dir*(1+s))%n)+n)%n};
+const SYM={S:'⊘',R:'⇄','+2':'+2',W:'★','+4':'+4',Q:'?'},NM={S:'Skip',R:'Reverse','+2':'Draw Two',W:'Wild','+4':'Wild Draw Four',Q:'Quiz'};
+const lab=c=>(c.c==='wild'?'':c.c+' ')+(NM[c.v]||c.v),face=c=>SYM[c.v]||c.v;
+function mkDeck(quiz){let id=0;const d=[],add=(c,v)=>d.push({id:id++,c,v});
+ COLORS.forEach(c=>{add(c,'0');for(let n=1;n<=9;n++){add(c,''+n);add(c,''+n)}['S','R','+2'].forEach(v=>{add(c,v);add(c,v)});if(quiz){add(c,'Q');add(c,'Q')}});
+ for(let i=0;i<4;i++){add('wild','W');add('wild','+4')}return shuf(d)}
+function newGame(players,team){let draw=mkDeck(DB.cfg.quiz);players.forEach((p,i)=>{p.hand=draw.splice(0,DB.cfg.hand);p.uno=false;p.pts=0;p.team=team?(i%2?'B':'A'):null});
+ let t;do{t=draw.shift();if(!/^\d$/.test(t.v)){draw.push(t);draw=shuf(draw);t=null}}while(!t);
+ G={players,draw,disc:[t],cur:0,dir:1,color:t.c,phase:'turn',drawn:null,msg:'Game started. Match the color, number or symbol.',ready:false,over:null,team,stall:0};
+ S.scr='game';render();botTick()}
+function drawCards(p,n){let got=0;for(let k=0;k<n;k++){if(!G.draw.length&&G.disc.length>1){const t=G.disc.pop();G.draw=shuf(G.disc);G.disc=[t]}if(!G.draw.length)break;p.hand.push(G.draw.pop());got++}return got}
+function ok(c,p){if(c.v==='W')return true;if(c.v==='+4')return!p.hand.some(h=>h!==c&&h.c===G.color);return c.c===G.color||c.v===topC().v}
+function go(i){G.cur=i;G.phase='turn';G.drawn=null;G.ready=false;render();botTick()}
+function play(i,cid,col){
+ if(!G||G.phase!=='turn'||i!==G.cur)return err('It is not your turn.');
+ const p=G.players[i],k=p.hand.findIndex(c=>c.id===cid);if(k<0)return err('That card is not in your hand.');const c=p.hand[k];
+ if(G.drawn!==null&&G.drawn!==cid)return err('Play the card you drew, or pass.');
+ if(!ok(c,p))return err(c.v==='+4'?'Wild Draw Four is only legal if you have no card of the current color.':'That card does not match.');
+ if(c.c==='wild'&&!COLORS.includes(col))return err('Choose a color.');
+ p.hand.splice(k,1);G.disc.push(c);G.color=c.c==='wild'?col:c.c;G.drawn=null;G.stall=0;
+ if(!p.hand.length){p.uno=false;return win(i)}
+ let m=p.name+' played '+lab(c)+(c.c==='wild'?' → '+col:'');
+ if(p.hand.length===1&&!p.uno){drawCards(p,2);m+=' — forgot to say UNO! +2 cards'}else if(p.hand.length===1)m+=' — UNO!';
+ p.uno=false;const np=G.players.length;let t=next(i);
+ if(c.v==='R'){G.dir*=-1;t=np===2?i:next(i)}
+ else if(c.v==='S'){m+=' — '+G.players[t].name+' is skipped';t=next(i,1)}
+ else if(c.v==='+2'||c.v==='+4'){const n=c.v==='+2'?2:4;drawCards(G.players[t],n);m+=' — '+G.players[t].name+' draws '+n;t=next(i,1)}
+ G.msg=m;if(c.v==='Q'){G.phase='quiz';quiz(i,t)}else go(t);return true}
+function quiz(i,t){const p=G.players[i],q=pick(),c=DB.cfg;if(!q){G.msg+=' — no questions available, challenge skipped';return go(t)}
+ const fin=r=>{if(r){p.pts+=c.pts;drawCards(G.players[t],c.rew);G.msg=p.name+' answered correctly! '+G.players[t].name+' draws '+c.rew}else{drawCards(p,c.pen);G.msg=p.name+' missed the challenge and draws '+c.pen}go(t)};
+ if(p.bot)fin(Math.random()<[0,.9,.75,.6,.45][q.l]);else ask(p.name,q,fin)}
+function drawAction(i){if(!G||G.phase!=='turn'||i!==G.cur)return err('It is not your turn.');if(G.drawn!==null)return err('You already drew. Play that card or pass.');
+ const p=G.players[i];p.uno=false;if(!drawCards(p,1)){G.msg='The draw pile is empty. Turn passes.';G.stall++;
+  if(G.stall>=G.players.length){let b=0;G.players.forEach((x,j)=>{if(x.hand.length<G.players[b].hand.length)b=j});return win(b,true)}return go(next(i))}
+ G.stall=0;const c=p.hand[p.hand.length-1];if(ok(c,p)){G.drawn=c.id;G.msg=p.name+' drew a playable card';render()}else{G.msg=p.name+' drew a card';go(next(i))}return true}
+function pass(i){if(!G||G.phase!=='turn'||i!==G.cur||G.drawn===null)return err('You can only pass after drawing.');G.msg=G.players[i].name+' passed';go(next(i))}
+const val=c=>/^\d$/.test(c.v)?+c.v:c.c==='wild'?50:20;
+function win(i,stale){const w=G.players[i];let sum=0;G.players.forEach(p=>{if(!G.team||p.team!==w.team)sum+=p.hand.reduce((a,c)=>a+val(c),0)});w.pts+=sum;G.phase='over';G.over={w:i,stale};render()}
+function botTick(){const g=G,i=G.cur;if(g.phase!=='turn'||!g.players[i].bot)return;setTimeout(()=>{if(G===g&&g.phase==='turn'&&g.cur===i&&S.scr==='game')botMove(i)},900)}
+function botMove(i){const p=G.players[i];let pl=p.hand.filter(c=>ok(c,p));
+ if(!pl.length){drawAction(i);if(!G||G.cur!==i||G.phase!=='turn'||G.drawn===null)return;pl=p.hand.filter(c=>c.id===G.drawn&&ok(c,p));if(!pl.length)return pass(i)}
+ const nw=pl.filter(c=>c.c!=='wild'),src=nw.length?nw:pl,c=src[rnd(src.length)],cnt={};
+ p.hand.forEach(h=>{if(h.c!=='wild')cnt[h.c]=(cnt[h.c]||0)+1});const col=Object.keys(cnt).sort((a,b)=>cnt[b]-cnt[a])[0]||COLORS[rnd(4)];
+ if(p.hand.length===2)p.uno=true;play(i,c.id,col)}
+/* ---------- views ---------- */
+const cardH=(c,a='')=>`<button class="card ${c.c}" ${a} aria-label="${lab(c)}"><i>${face(c)}</i></button>`;
+const ARENA='../../index.html?back=english-uno',armed=()=>!!S.arm&&Date.now()-S.arm<2500;
+function hdr(){return`<header><b>ENGLISH UNO</b><span>${S.scr==='menu'?'':'<button class="btn ghost" data-act="menu">☰ Menu</button>'}<button class="btn ghost" data-act="arena">${armed()?'SURE? CLICK AGAIN':'⌂ MAIN MENU'}</button></span></header>`}
+function menu(){return`<main class="wrap"><h1>ENGLISH UNO</h1><p class="sub">PLAY, LEARN &amp; WIN</p><div class="grid">${[['classic','🃏','Classic Learning','Compete individually. Quiz cards trigger English challenges.','#ff4d4d'],['duel','⚔️','Knowledge Duel','Two players answer comparable questions.','#2d7bff'],['team','🤝','Team Battle','Two teams; a teammate going out wins for the team.','#35d07f'],['practice','📘','Practice Mode','Practice alone with instant feedback.','#ffd23f']].map(m=>`<button class="mode" style="--mc:${m[4]}" data-act="mode" data-m="${m[0]}"><span>${m[1]}</span><b>${m[2]}</b><small>${m[3]}</small></button>`).join('')}</div>
+<button class="btn ghost" data-act="teacher">👩‍🏫 Teacher dashboard</button>
+<p class="note">Everything runs on this device: local players (pass-and-play) plus computer bots. Online multiplayer and live monitoring of sessions need a server, which this standalone page does not have. Unofficial educational game, not affiliated with UNO.</p></main>`}
+function setup(){const m=S.m,tt={classic:'Classic Learning',duel:'Knowledge Duel',team:'Team Battle',practice:'Practice Mode'}[m];let f='';
+ const arenaStudents=window.ArenaDB?ArenaDB.list():[];
+ const chips=arenaStudents.length?`<div style="margin:8px 0;max-width:520px"><small style="color:var(--y);display:block;margin-bottom:4px">👥 Students from Arena (click to add):</small><div style="display:flex;gap:4px;flex-wrap:wrap">${arenaStudents.slice(0,12).map(s=>`<button type="button" class="btn ghost" style="padding:2px 8px;font-size:12px;margin:2px" data-act="pickName" data-name="${esc(s.name)}">+ ${esc(s.name)}</button>`).join('')}</div></div>`:'';
+ if(m==='duel')f=`<label for="n1">Player 1</label><input id="n1" maxlength="14" value="Player 1"><label for="n2">Player 2</label><input id="n2" maxlength="14" value="Player 2">${chips}`;
+ else if(m==='practice')f=`<label for="n1">Your name</label><input id="n1" maxlength="14" value="Student">${chips}`;
+ else f=`<label for="names">Human players (comma-separated, up to 10)</label><input id="names" value="${arenaStudents.length?esc(arenaStudents.slice(0,3).map(s=>s.name).join(', ')):'Player 1'}"><label for="bots">Computer bots (0–9)</label><input id="bots" type="number" min="0" max="9" value="${m==='team'?3:2}">${chips}<p class="note">${m==='team'?'Team Battle needs at least 4 players in total (teams A/B alternate).':'Total players: 2–10. With several humans, pass the device when asked.'}</p>`;
+ return`<main class="wrap"><div class="panel"><h2>${tt}</h2>${f}<p class="note">Questions use the teacher's settings: ${DB.cfg.cats.length} categories, levels ${DB.cfg.lv.map(l=>LV[l]).join(', ')}, timer ${DB.cfg.timer?DB.cfg.timer+'s':'off'}.</p><button class="btn" data-act="start">Start</button></div></main>`}
+function game(){const g=G,cp=g.players[g.cur],hum=g.players.filter(p=>!p.bot),v=hum.length===1?hum[0]:(!cp.bot&&g.ready?cp:null),vi=g.players.indexOf(v);
+ const can=g.phase==='turn'&&!cp.bot&&v===cp,t=topC();
+ const opps=g.players.map((p,i)=>i===vi?'':`<div class="op ${i===g.cur?'on':''}"><b>${esc(p.name)}</b>${p.team?' · Team '+p.team:''}<br>🂠 ${p.hand.length} · ${p.pts} pts</div>`).join('');
+ const hand=v?v.hand.map(c=>cardH(c,`data-act="play" data-id="${c.id}"${can&&ok(c,v)?'':' aria-disabled="true"'}`).replace('class="card','class="card '+(can&&ok(c,v)?'pl':'')) ).join(''):'';
+ const cur=g.phase==='over'?'':!cp.bot&&!v&&g.phase==='turn'?`<div class="panel" style="text-align:center">Pass the device to <b>${esc(cp.name)}</b><br><button class="btn" data-act="ready">I'm ${esc(cp.name)} — show my cards</button></div>`:'';
+ return`<main class="wrap game"><div class="opps" aria-label="Players">${opps}</div>
+<div class="table"><button class="card pile" data-act="draw" aria-label="Draw a card (${g.draw.length} left)"${can?'':' disabled'}>${g.draw.length}</button><div class="card ${t.c}" aria-label="Top card: ${lab(t)}"><i>${face(t)}</i></div><div><div class="cc ${g.color}" role="img" aria-label="Current color ${g.color}"></div><small>${g.color}</small></div></div>
+<div class="status" aria-live="polite">${g.phase==='over'?'':'Turn: <b>'+esc(cp.name)+'</b> '+(g.dir>0?'↻':'↺')+' · '}${esc(g.msg)}</div>${cur}
+${v?`<div style="text-align:center"><b>${esc(v.name)}'s hand</b> (${v.hand.length})${can&&v.hand.length<=2?' <button class="btn" data-act="uno">UNO!</button>':''}${can&&g.drawn!==null?' <button class="btn ghost" data-act="pass">Pass</button>':''}</div><div class="hand" style="text-align:center">${hand}</div>`:''}</main>`}
+function prac(){return`<main class="wrap"><div class="panel"><h2>Practice Mode</h2><p>Answered: <b>${P.n}</b> · Correct: <b>${P.ok}</b></p><button class="btn" data-act="pnext">Next question</button></div></main>`}
+function pres(){return`<main class="wrap"><div class="panel"><h2>Practice summary</h2><p>${P.ok} correct out of ${P.n} (${P.n?Math.round(P.ok/P.n*100):0}%).</p><button class="btn" data-act="mode" data-m="practice">Practice again</button></div></main>`}
+function duel(){return`<main class="wrap"><div class="panel"><h2>Knowledge Duel</h2><p>Round ${Math.min(D.r+1,D.total)} of ${D.total}</p><p>${esc(D.n[0])}: <b>${D.s[0]}</b> · ${esc(D.n[1])}: <b>${D.s[1]}</b></p></div></main>`}
+function dres(){const w=D.s[0]===D.s[1]?'It is a tie!':esc(D.n[D.s[0]>D.s[1]?0:1])+' wins!';return`<main class="wrap"><div class="panel"><h2>${w}</h2><p>${esc(D.n[0])}: ${D.s[0]} · ${esc(D.n[1])}: ${D.s[1]}</p><button class="btn" data-act="mode" data-m="duel">Rematch</button></div></main>`}
+function overlays(){let h='';
+ if(S.gate)h+=`<div class="ov" role="dialog" aria-modal="true"><div class="dlg" style="text-align:center"><h2>${esc(S.gate.t)}</h2><button class="btn" data-act="go">Start</button></div></div>`;
+ else if(Q)h+=qModal();
+ else if(S.pick!=null)h+=`<div class="ov" role="dialog" aria-modal="true"><div class="dlg" style="text-align:center"><h2>Choose a color</h2>${COLORS.map(c=>`<button class="card ${c}" data-act="col" data-c="${c}" aria-label="${c}"><i></i></button>`).join('')}<br><button class="btn ghost" data-act="nocol">Cancel</button></div></div>`;
+ else if(G&&G.over){const o=G.over,w=G.players[o.w],ps=[...G.players].sort((a,b)=>b.pts-a.pts);let tm='';
+  if(G.team){const s={A:0,B:0};G.players.forEach(p=>s[p.team]+=p.pts);tm=`<p>Team A: <b>${s.A}</b> · Team B: <b>${s.B}</b></p>`}
+  h+=`<div class="ov" role="dialog" aria-modal="true"><div class="dlg"><h2>🏆 ${esc(w.name)}${G.team?' (Team '+w.team+')':''} wins!</h2>${o.stale?'<p class="note">No cards left to draw — the player with the fewest cards wins.</p>':''}${tm}<table class="tb"><tr><th>Player</th><th>Points</th></tr>${ps.map(p=>`<tr><td>${esc(p.name)}</td><td>${p.pts}</td></tr>`).join('')}</table><button class="btn" data-act="again">Play again</button><button class="btn ghost" data-act="menu">Menu</button></div></div>`}
+ return h}
+function qModal(){const q=Q.q;let b='';
+ if(!Q.done){if(q.t==='mc'||q.t==='tf')b=Q.opts.map((o,i)=>`<button class="opt" data-act="ans" data-i="${i}">${esc(o)}</button>`).join('');
+  else if(q.t==='build')b=`<div style="min-height:44px;border:2px dashed var(--bd);border-radius:10px;padding:4px">${Q.sel.map(j=>`<button class="chip" data-act="rem" data-j="${j}">${esc(Q.w[j])}</button>`).join('')}</div><div>${Q.ord.filter(j=>!Q.sel.includes(j)).map(j=>`<button class="chip" data-act="add" data-j="${j}">${esc(Q.w[j])}</button>`).join('')}</div><button class="btn" data-act="bsub">Check</button>`;
+  else b=`<input id="ai" autocomplete="off" aria-label="Your answer"><button class="btn" data-act="sub">Check</button>`}
+ else b=`<p class="${Q.ok?'good':'bad'}">${Q.ok?'✅ Correct!':Q.to?'⏰ Time is up.':'❌ Not quite.'}</p>${Q.ok?'':`<p>Correct answer: <b>${esc(q.a.replace(/\|/g,' / '))}</b></p>`}<button class="btn" data-act="cont">Continue</button>${Q.pr?'<button class="btn ghost" data-act="stop">Finish practice</button>':''}`;
+ return`<div class="ov" role="dialog" aria-modal="true" aria-label="English challenge"><div class="dlg"><small>${esc(Q.name)} · ${esc(q.c)} · ${LV[q.l]} · ${TY[q.t]}</small>${DB.cfg.timer&&!Q.done?`<div class="bar" id="tm"><div style="width:100%"></div></div><small>${DB.cfg.timer}s</small>`:''}<h2 style="font-size:1.2rem">${esc(q.q)}</h2>${b}</div></div>`}
+/* ---------- teacher ---------- */
+const chk=(id,on,t)=>`<label class="chk"><input type="checkbox" id="${id}" ${on?'checked':''}>${esc(t)}</label>`,num=(id,t,v,mn,mx)=>`<label for="${id}">${t}</label><input id="${id}" type="number" min="${mn}" max="${mx}" value="${v}">`;
+function teacher(){const c=DB.cfg,tabs=[['set','Settings'],['qs','Questions'],['res','Results']];let b='';
+ if(S.tab==='set')b=`<div class="panel"><h3>Categories</h3>${CATS.map((x,i)=>chk('c'+i,c.cats.includes(x),x)).join('')}<h3>Difficulty</h3>${[1,2,3,4].map(l=>chk('l'+l,c.lv.includes(l),LV[l])).join('')}<h3>Rules</h3>${chk('quiz',c.quiz,'Enable educational (Quiz) cards')}${num('timer','Timer per question in seconds (0 = off)',c.timer,0,300)}${num('pts','Points per correct answer',c.pts,0,100)}${num('rew','Correct answer: next player draws (cards)',c.rew,0,4)}${num('pen','Wrong answer: you draw (cards)',c.pen,0,6)}${num('hand','Starting hand size (5–10)',c.hand,5,10)}<br><button class="btn" data-act="saveset">Save settings</button></div>`;
+ else if(S.tab==='qs'){const e=S.edit,eq=e&&e!=='new'?DB.B.find(x=>x.id===e):null,f=eq||{c:CATS[0],l:1,t:'mc',q:'',o:[],a:''};
+  const form=e?`<div class="panel"><h3>${eq?'Edit':'New'} question</h3><label for="qc">Category</label><select id="qc">${CATS.map(x=>`<option ${x===f.c?'selected':''}>${x}</option>`).join('')}</select><label for="ql">Level</label><select id="ql">${[1,2,3,4].map(l=>`<option value="${l}" ${l===f.l?'selected':''}>${LV[l]}</option>`).join('')}</select><label for="qt">Type</label><select id="qt">${Object.keys(TY).map(t=>`<option value="${t}" ${t===f.t?'selected':''}>${TY[t]}</option>`).join('')}</select><label for="qq">Question text</label><textarea id="qq">${esc(f.q)}</textarea><label for="qo">Options (multiple choice only, comma-separated, must include the answer)</label><input id="qo" value="${esc((f.o||[]).join(', '))}"><label for="qa">Answer (True/False, text, or full sentence for building; use | for alternatives)</label><input id="qa" value="${esc(f.a)}"><br><button class="btn" data-act="qsave">Save</button><button class="btn ghost" data-act="qcancel">Cancel</button></div>`:'';
+  const rows=[...DB.B].sort((a,b)=>CATS.indexOf(a.c)-CATS.indexOf(b.c)||a.l-b.l).map(x=>`<tr><td>${esc(x.c)}</td><td>${LV[x.l]}</td><td>${TY[x.t]}</td><td>${esc(x.q.slice(0,60))}</td><td><button class="btn ghost" data-act="qedit" data-id="${x.id}">Edit</button><button class="btn red" data-act="qdel" data-id="${x.id}">${S.cf==='d'+x.id?'Sure?':'Delete'}</button></td></tr>`).join('');
+  b=`${form}<button class="btn" data-act="qnew">+ Add question</button><button class="btn red" data-act="qreset">${S.cf==='qr'?'Sure? Restore default bank':'Restore default bank'}</button><p class="note">${DB.B.length} questions. Correct answers are stored in this browser; they are only revealed to students after they submit, but this standalone page cannot hide them from someone inspecting the page.</p><div class="tbx"><table class="tb"><tr><th>Category</th><th>Level</th><th>Type</th><th>Question</th><th></th></tr>${rows}</table></div>`}
+ else{const by=(k)=>{const m={};DB.R.forEach(r=>{const x=m[r[k]]||(m[r[k]]={n:0,ok:0});x.n++;if(r.ok)x.ok++});return Object.entries(m)};
+  const tb=(a,h)=>`<div class="tbx"><table class="tb"><tr><th>${h}</th><th>Answered</th><th>Correct</th><th>Accuracy</th><th>Score</th></tr>${a.map(([k,x])=>`<tr><td>${esc(k)}</td><td>${x.n}</td><td>${x.ok}</td><td>${Math.round(x.ok/x.n*100)}%</td><td>${x.ok*c.pts}</td></tr>`).join('')||'<tr><td colspan=5>No results yet.</td></tr>'}</table></div>`;
+  b=`<div class="panel"><h3>By student</h3>${tb(by('p'),'Student')}<h3>By category</h3>${tb(by('c'),'Category')}<button class="btn red" data-act="rclear">${S.cf==='rc'?'Sure? Clear results':'Clear results'}</button><p class="note">Results are stored only in this browser. Score = correct answers × points per answer. Bot answers are not recorded.</p></div>`}
+ return`<main class="wrap"><h2>Teacher dashboard</h2><div>${tabs.map(t=>`<button class="btn ${S.tab===t[0]?'':'ghost'}" data-act="tab" data-t="${t[0]}">${t[1]}</button>`).join('')}</div>${b}<p class="note">No login: anyone using this device can open this dashboard (real authorization needs a backend).</p></main>`}
+/* ---------- render & actions ---------- */
+function render(){$('app').innerHTML=hdr()+({menu,setup,game,teacher,practice:prac,pres,duel,dres}[S.scr]||menu)()+overlays();const e=$('ai');if(e&&Q&&!Q.done)e.focus()}
+const v_=id=>($(id)?$(id).value:'');
+const A={
+arena:(d,b)=>{const busy=(G&&G.phase!=='over')||!!Q||S.scr==='duel'||S.scr==='practice';
+ if(busy&&!armed()){S.arm=Date.now();if(b)b.textContent='SURE? CLICK AGAIN';setTimeout(()=>{if(!armed()){const e=document.querySelector('[data-act="arena"]');if(e)e.textContent='⌂ MAIN MENU'}},2600);return}
+ if(Q)clearInterval(Q.t);location.href=ARENA},
+mode:d=>{S.m=d.m;S.scr='setup';render()},
+teacher:()=>{S.scr='teacher';render()},tab:d=>{S.tab=d.t;S.edit=null;S.cf=null;render()},
+menu:()=>{if(Q)clearInterval(Q.t);Q=null;G=null;S.gate=null;S.pick=null;S.scr='menu';render()},
+start:()=>{const m=S.m,bn=['Robo','Pixel','Nova','Byte','Zed','Echo','Milo','Luna','Sky'];
+ if(m==='practice'||m==='duel'){const ns=m==='duel'?[v_('n1').trim(),v_('n2').trim()]:[v_('n1').trim()];
+  if(ns.some(n=>!n))return err('Please enter all names.');if(m==='duel'&&norm(ns[0])===norm(ns[1]))return err('Names must be different.');
+  if(!DB.B.some(q=>DB.cfg.cats.includes(q.c)&&DB.cfg.lv.includes(q.l)))return err('No questions match the current settings. Ask your teacher to adjust them.');
+  if(m==='practice'){P={name:ns[0],n:0,ok:0};S.scr='practice';render();return A.pnext()}
+  D={n:ns,s:[0,0],r:0,total:5};S.scr='duel';render();return dstep()}
+ const hs=v_('names').split(',').map(s=>s.trim()).filter(Boolean),nb=Math.floor(+v_('bots'));
+ if(!hs.length)return err('Enter at least one player name.');if(hs.some(n=>n.length>14))return err('Names can have at most 14 characters.');
+ if(new Set(hs.map(norm)).size!==hs.length)return err('Player names must be different.');if(!(nb>=0&&nb<=9))return err('Bots must be between 0 and 9.');
+ const tot=hs.length+nb;if(tot<2||tot>10)return err('You need 2–10 players in total.');if(m==='team'&&tot<4)return err('Team Battle needs at least 4 players.');
+ newGame([...hs.map(n=>({name:n,bot:false})),...Array.from({length:nb},(_,i)=>({name:bn[i]+' (bot)',bot:true}))],m==='team')},
+play:d=>{if(!G||G.phase!=='turn')return;const cp=G.players[G.cur],hum=G.players.filter(p=>!p.bot);if(cp.bot||(hum.length>1&&!G.ready))return;
+ const c=cp.hand.find(x=>x.id==d.id);if(!c)return;if(!ok(c,cp))return err('That card does not match.');if(G.drawn!==null&&G.drawn!==c.id)return err('Play the card you drew, or pass.');
+ if(c.c==='wild'){S.pick=c.id;render()}else play(G.cur,c.id)},
+col:d=>{const id=S.pick;S.pick=null;if(id==null||!G)return render();play(G.cur,id,d.c)||render()},nocol:()=>{S.pick=null;render()},
+draw:()=>{if(G&&!G.players[G.cur].bot)drawAction(G.cur)},pass:()=>{if(G&&!G.players[G.cur].bot)pass(G.cur)},
+uno:()=>{if(G&&G.phase==='turn'&&!G.players[G.cur].bot){G.players[G.cur].uno=true;toast('UNO!')}},
+ready:()=>{G.ready=true;render()},again:()=>{const ps=G.players.map(p=>({name:p.name,bot:p.bot}));newGame(ps,G.team)},
+ans:d=>{if(Q&&Q.opts)submit(Q.opts[+d.i])},sub:()=>{const v=v_('ai').trim();if(!v)return err('Type an answer first.');submit(v)},
+add:d=>{if(Q&&!Q.done&&!Q.sel.includes(+d.j)){Q.sel.push(+d.j);render()}},rem:d=>{if(Q&&!Q.done){Q.sel=Q.sel.filter(j=>j!==+d.j);render()}},
+bsub:()=>{if(!Q.sel.length)return err('Add some words first.');submit(Q.sel.map(j=>Q.w[j]).join(' '))},
+cont:()=>{if(!Q||!Q.done)return;const c=Q.cb,r=Q.ok;Q=null;c(r)},
+stop:()=>{if(Q)clearInterval(Q.t);Q=null;S.scr='pres';render()},go:()=>{const g=S.gate;S.gate=null;g.cb()},
+pnext:()=>{const q=pick();if(!q){S.scr='pres';render();return err('No questions match the current settings.')}ask(P.name,q,r=>{P.n++;if(r)P.ok++;render();A.pnext()},1)},
+saveset:()=>{const cats=CATS.filter((_,i)=>$('c'+i).checked),lv=[1,2,3,4].filter(l=>$('l'+l).checked),n=(id,a,b)=>Math.min(b,Math.max(a,Math.floor(+v_(id))||0));
+ if(!cats.length||!lv.length)return err('Select at least one category and one level.');
+ DB.cfg={cats,lv,quiz:$('quiz').checked,timer:n('timer',0,300),pts:n('pts',0,100),rew:n('rew',0,4),pen:n('pen',0,6),hand:n('hand',5,10)};save();
+ toast(DB.B.some(q=>cats.includes(q.c)&&lv.includes(q.l))?'Settings saved.':'Saved, but no questions match these filters!')},
+qnew:()=>{S.edit='new';render()},qedit:d=>{S.edit=+d.id;render()},qcancel:()=>{S.edit=null;render()},
+qsave:()=>{const t=v_('qt'),q=v_('qq').trim();let a=v_('qa').trim(),o=null;if(!q)return err('Write the question.');if(!a)return err('Write the answer.');
+ if(t==='mc'){o=[...new Set(v_('qo').split(',').map(s=>s.trim()).filter(Boolean))];if(o.length<2)return err('Multiple choice needs at least 2 options.');if(!o.includes(a))return err('The answer must be one of the options.')}
+ if(t==='tf'){a=norm(a)==='true'?'True':norm(a)==='false'?'False':'';if(!a)return err('Answer must be True or False.')}
+ if(t==='build'&&a.split(/\s+/).length<2)return err('The sentence needs at least 2 words.');
+ const r={c:v_('qc'),l:+v_('ql'),t,q,o,a};if(S.edit==='new')DB.B.push({id:Math.max(0,...DB.B.map(x=>x.id))+1,...r});else{const x=DB.B.find(x=>x.id===S.edit);if(x)Object.assign(x,r)}
+ save();S.edit=null;render();toast('Question saved.')},
+qdel:d=>{if(S.cf!=='d'+d.id){S.cf='d'+d.id;return render()}DB.B=DB.B.filter(x=>x.id!==+d.id);S.cf=null;save();render()},
+qreset:()=>{if(S.cf!=='qr'){S.cf='qr';return render()}DB.B=BANK.map((r,i)=>({id:i+1,c:CATS[r[0]],l:r[1],t:r[2],q:r[3],o:r[4]||null,a:r[5]}));S.cf=null;save();render()},
+rclear:()=>{if(S.cf!=='rc'){S.cf='rc';return render()}DB.R=[];S.cf=null;save();render()},
+pickName:d=>{
+ const n=d.name;if(!n)return;
+ if($('names')){
+  let cur=$('names').value.split(',').map(s=>s.trim()).filter(Boolean);
+  if(cur.length===1&&cur[0].toLowerCase().startsWith('player'))cur=[n];
+  else if(!cur.includes(n))cur.push(n);
+  $('names').value=cur.slice(0,10).join(', ');
+ }else if($('n1')&&($('n1').value==='Player 1'||$('n1').value==='Student')){$('n1').value=n}
+ else if($('n2')&&$('n2').value==='Player 2'){$('n2').value=n}
+}};
+function gate(t,cb){S.gate={t,cb};render()}
+function dstep(){if(D.r>=D.total){S.scr='dres';return render()}const q1=pick();if(!q1){S.scr='menu';render();return err('No questions match the current settings.')}
+ const q2=pick(q1.c,q1.l,q1.id)||pick(null,null,q1.id)||q1;
+ gate(D.n[0]+', your question (round '+(D.r+1)+'/'+D.total+')',()=>ask(D.n[0],q1,a=>{if(a)D.s[0]++;
+  gate(D.n[1]+', your question',()=>ask(D.n[1],q2,b=>{if(b)D.s[1]++;D.r++;dstep()}))}))}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-act]');if(!b||b.disabled)return;try{A[b.dataset.act]&&A[b.dataset.act](b.dataset,b)}catch(x){toast('Something went wrong: '+x.message)}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.id==='ai')A.sub()});
+if(window.ArenaDB)ArenaDB.mountBadge();
+render();
+</script></body></html>

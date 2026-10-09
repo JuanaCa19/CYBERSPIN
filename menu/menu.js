@@ -20,6 +20,7 @@ const ART={
  wheel:()=>'<div class="wheel"></div><div class="ptr"></div>',
  mystery:()=>'<div class="mb"><i class="mb-glow"></i><div class="mb-lid"></div><div class="mb-body"><b>?</b></div><s class="sp1"></s><s class="sp2"></s><s class="sp3"></s></div>',
  dart:()=>'<div class="dt"><div class="dt-board"></div><div class="dt-dart"><i></i><u></u></div></div>',
+ uno:()=>'<div class="ucards"><b style="--x:-72%;--r:-16deg;background:#e53935">7</b><b style="--x:72%;--r:16deg;background:#fdd835;color:#222">?</b><b style="--x:0%;--r:0deg;background:#1e88e5;z-index:2">+2</b></div>',
  icon:g=>`<div class="big">${g.icon}</div>`};
 const cards=$('#cards');
 GAMES.forEach(g=>{const el=document.createElement('article');el.className='card';el.style.setProperty('--c',g.color);el.dataset.id=g.id;
