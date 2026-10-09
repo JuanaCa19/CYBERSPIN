@@ -83,8 +83,9 @@ label.q{font-size:16px;display:flex;gap:8px;align-items:center;justify-content:c
 
 <section id="students" class="scr on"><div class="card">
  <h2 class="title" style="font-size:36px">STUDENTS</h2>
+ <div id="dbStatus" style="font-size:13px;opacity:.8;margin-bottom:6px">Connecting to database…</div>
  <ul id="list"></ul>
- <div class="row"><input type="text" id="inp" maxlength="20" placeholder="Student name"><button class="btn grn" id="add" style="padding:8px 16px">+ ADD STUDENT</button></div>
+ <div class="row"><input type="text" id="inp" maxlength="40" placeholder="Student name"><button class="btn grn" id="add" style="padding:8px 16px">+ ADD STUDENT</button></div>
  <div class="msg" id="smsg"></div>
  <label class="q"><input type="checkbox" id="useq"> English questions (CORRECT / INCORRECT)</label>
  <div class="row" style="justify-content:center"><button class="btn red" id="startG">START GAME</button><button class="btn ghost" id="toMenu1">MAIN MENU</button></div>
@@ -115,22 +116,63 @@ label.q{font-size:16px;display:flex;gap:8px;align-items:center;justify-content:c
 </div></section>
 <div id="err"><div>Three.js / WebGL could not be loaded. Check your connection and reload.<br><br><a class="btn ghost" href="../../index.html?back=student-dart" style="text-decoration:none;display:inline-block">MAIN MENU</a></div></div>
 
+<script src="../../shared/participants-db.js"></script>
 <script src="aim.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 (()=>{
 "use strict";
 const $=id=>document.getElementById(id);
-const KEY='studentDart.students',QKEY='studentDart.questions',SKEY='studentDart.sound';
+const QKEY='studentDart.questions',SKEY='studentDart.sound',MIGKEY='studentDart.migrated';
 const QS=["What is your name?","How old are you?","What did you eat today?","Describe your best friend.","What is your favorite color?","What do you do on weekends?","Can you spell your last name?","What time do you wake up?","What is the weather like today?","Name three animals.","What are you wearing today?","Where do you live?"];
 
 /* ---------- state (ALL = lista original · avail = disponibles en la ronda · picked = ya seleccionados) ---------- */
 let ALL=[],avail=[],shown=[],picked=[],round=1,busy=false,useQ=true,token=0,running=false,hl=-1,wob=0,zoom=0,muted=false,lastQ=-1,phase='aim';
-function load(){let raw=null;try{raw=localStorage.getItem(KEY)}catch(e){}
- try{ALL=raw===null?['Juan','Carlos','María','Pedro','Ana']:JSON.parse(raw)}catch(e){ALL=[]}
- if(!Array.isArray(ALL))ALL=[];const seen=new Set();ALL=ALL.filter(s=>typeof s==='string'&&s.trim()&&!seen.has(s.trim().toLowerCase())&&seen.add(s.trim().toLowerCase())).map(s=>s.trim());
- try{useQ=localStorage.getItem(QKEY)!=='0';muted=localStorage.getItem(SKEY)==='0'}catch(e){}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(ALL));localStorage.setItem(QKEY,useQ?'1':'0');localStorage.setItem(SKEY,muted?'0':'1')}catch(e){}}
+
+/* ---------- spinning roulette state ---------- */
+let spinAngle=0, spinSpeed=12.5, spinning=true; /* rad/s (~2 vueltas/s) — giro rápido para que sea emocionante e impredecible */
+
+/* ---------- ArenaDB integration ---------- */
+const errText=(r)=>{
+ switch(r&&r.error){
+  case 'empty':return 'The name cannot be empty.';
+  case 'duplicate':return 'That student is already in the list.';
+  case 'limit':return 'Student limit reached ('+ArenaDB.MAX_ITEMS+').';
+  case 'permission-denied':return 'Firebase rules block this action.';
+  default:return 'No connection to the database. Try again.';
+ }
+};
+
+function syncFromDB(list){
+ ALL=list.map(p=>p.name);
+ renderList();
+}
+ArenaDB.onChange(syncFromDB);
+ArenaDB.onStatus(s=>{
+ const el=$('dbStatus');
+ if(!el)return;
+ el.textContent=s==='online'?'☁ Synced — shared with all games'
+  :s==='offline'?'⚠ Offline — showing last saved copy':'◌ Connecting…';
+ el.style.color=s==='online'?'#4ade80':s==='offline'?'#fbbf24':'#cbd5e1';
+});
+ArenaDB.mountBadge();
+
+/* Migrate local names on first load */
+(async()=>{
+ try{if(localStorage.getItem(MIGKEY))return}catch(e){return}
+ let raw=null;try{raw=localStorage.getItem('studentDart.students')}catch(e){}
+ let local=[];try{local=raw?JSON.parse(raw):[]}catch(e){local=[]}
+ if(Array.isArray(local)&&local.length){
+  await ArenaDB.migrateOnce(local);
+ }
+ try{localStorage.setItem(MIGKEY,'1')}catch(e){}
+})();
+
+function load(){
+ ALL=ArenaDB.list().map(p=>p.name);
+ try{useQ=localStorage.getItem(QKEY)!=='0';muted=localStorage.getItem(SKEY)==='0'}catch(e){}
+}
+function save(){try{localStorage.setItem(QKEY,useQ?'1':'0');localStorage.setItem(SKEY,muted?'0':'1')}catch(e){}}
 
 /* ---------- audio ---------- */
 let AC,lt=0;
@@ -225,8 +267,6 @@ function burst(x,y,z,n,sp){let k=0;for(const p of parts){if(p.life>0)continue;if
 
 /* ---------- apuntado: ratón → objetivo en la diana → dirección del arco ---------- */
 const mouse={x:0,y:.05},aimT={x:0,y:0};let aimLocked=false,nock=null,flying=null,stuck=null,draw=0,recoil=0,aimIdx=-2,curDir={x:0,y:0,z:-1};
-/* La mira sigue al ratón sobre la escena. Al dirigirse a un botón (SHOOT ARROW…) el puntero abandona el punto apuntado:
-   en cuanto entra en un botón la mira se congela y vuelve al punto que tenía ~0,3 s antes, para que el clic no desvíe el tiro. */
 let overUI=false;const trail=[];
 addEventListener('pointermove',e=>{const ui=!!e.target.closest('button,#sel'),now=performance.now(),nx=e.clientX/innerWidth*2-1,ny=-(e.clientY/innerHeight*2-1);
  if(!ui){mouse.x=nx;mouse.y=ny;trail.push({t:now,x:nx,y:ny});while(trail.length&&now-trail[0].t>1500)trail.shift();overUI=false}
@@ -235,16 +275,28 @@ function fit(){const w=innerWidth,h=innerHeight;R.setSize(w,h,false);aspect=w/h;
  camZ=Math.max(13,13*1.45/aspect);BOW.z=camZ-4;cam.position.set(0,0,camZ-zoom);rig.position.set(BOW.x,BOW.y,BOW.z)}
 addEventListener('resize',fit);fit();
 
+/* ---------- spinning roulette helpers ---------- */
+/* The board rotates continuously while the teacher aims.
+   The reticle stays fixed on screen — but the SECTOR under it changes as the board spins.
+   We apply spinAngle as disc.rotation.z so the texture spins visually.
+   When computing the sector, Aim.sectorAt offsets the aim point by -spinAngle so the hit matches the visual. */
+const sectorAtWithSpin = (x, y, n) => Aim.sectorAt(x, y, n, spinAngle);
+
 function aimUpdate(dt){
+ /* ---------- spin the board while aiming & firing until impact ---------- */
+ if(spinning){
+  spinAngle=(spinAngle+spinSpeed*dt)%(Math.PI*2);
+  disc.rotation.z=spinAngle;
+ }
+
  if(!aimLocked){const T=Aim.clampTarget(Aim.screenToBoard(mouse.x,mouse.y,aspect,camZ)),k=1-Math.exp(-20*dt);aimT.x+=(T.x-aimT.x)*k;aimT.y+=(T.y-aimT.y)*k}
  const d=curDir=Aim.dirTo(BOW,aimT.x,aimT.y),an=Aim.angles(d);
  rig.rotation.set(an.pitch,-an.yaw,0);rig.position.set(BOW.x-d.x*recoil,BOW.y-d.y*recoil,BOW.z-d.z*recoil);setString(draw);
  if(nock){const nx=BOW.x-d.x*draw*RIG_S,ny=BOW.y-d.y*draw*RIG_S,nz=BOW.z-d.z*draw*RIG_S;placeArrow(nock,{x:nx+d.x*ALEN,y:ny+d.y*ALEN,z:nz+d.z*ALEN},d)}
  const showRet=!aimLocked&&(phase==='aim'||phase==='draw');reticle.visible=showRet;
- if(showRet){const idx=Aim.sectorAt(aimT.x,aimT.y,shown.length);reticle.position.set(aimT.x,aimT.y,BZ+.3);
-  if(idx!==aimIdx){aimIdx=idx;reticle.material.map=idx>=0?retOk:retOut;reticle.material.needsUpdate=true;
-   if(phase==='aim'){hl=idx;drawBoard()}
-   const el=$('aimInfo');$('aimName').textContent=idx>=0?shown[idx].toUpperCase():'OUT OF BOARD';el.classList.toggle('hit',idx>=0);el.classList.toggle('out',idx<0);if(idx>=0)sfx('tick')}}}
+ if(showRet){const onB=Aim.onBoard(aimT.x,aimT.y);reticle.position.set(aimT.x,aimT.y,BZ+.3);
+  if((aimIdx>=0)!==onB){aimIdx=onB?0:-1;reticle.material.map=onB?retOk:retOut;reticle.material.needsUpdate=true;
+   const el=$('aimInfo');$('aimName').textContent=onB?'ROULETTE 🎯':'OUT OF BOARD';el.classList.toggle('hit',onB);el.classList.toggle('out',!onB);if(onB)sfx('tick')}}}
 
 let last=0;
 function loop(t){requestAnimationFrame(loop);if(!running){last=t;return}
@@ -265,24 +317,29 @@ function hud(){$('hr').textContent=round;$('hl').textContent=avail.length;$('hs'
 function setBtns(){$('throw').disabled=busy||phase!=='aim';$('throw').classList.toggle('hide',(!avail.length&&!busy)||phase==='result')}
 function banner(t,cls,ms,tok){const b=$('banner');$('bannerTxt').textContent=t;b.className='on '+(cls||'');return sleep(ms,tok).then(r=>{b.className='';return r})}
 
-/* ---------- students screen ---------- */
+/* ---------- students screen (ArenaDB) ---------- */
 function renderList(){const ul=$('list');ul.textContent='';
  ALL.forEach((s,i)=>{const li=document.createElement('li'),sp=document.createElement('span'),e=document.createElement('button'),d=document.createElement('button');
   sp.textContent=s;e.textContent='✎';d.textContent='✕';e.title='Edit';d.title='Delete';
-  e.onclick=()=>{const v=prompt('Edit student',s);if(v===null)return;const n=v.trim();if(!n)return;if(ALL.some((x,j)=>j!==i&&x.toLowerCase()===n.toLowerCase())){msg('That student already exists.');return}ALL[i]=n.slice(0,20);save();renderList()};
-  d.onclick=()=>{ALL.splice(i,1);save();renderList();msg('')};
+  e.onclick=async()=>{const v=prompt('Edit student',s);if(v===null)return;const n=v.trim();if(!n)return;
+   const dbItem=ArenaDB.list().find(p=>p.name===s);if(!dbItem)return;
+   const r=await ArenaDB.rename(dbItem.id,n);if(!r.ok){msg(errText(r));return}msg('')};
+  d.onclick=async()=>{const dbItem=ArenaDB.list().find(p=>p.name===s);if(!dbItem)return;
+   const r=await ArenaDB.remove(dbItem.id);if(!r.ok){msg(errText(r));return}msg('')};
   li.append(sp,e,d);ul.append(li)});
  if(!ALL.length){const li=document.createElement('li');li.textContent='No students yet.';ul.append(li)}
  $('useq').checked=useQ}
 function msg(t){$('smsg').textContent=t}
-function addStudent(){const n=$('inp').value.trim().slice(0,20);if(!n){msg('Type a name first.');return}
- if(ALL.some(x=>x.toLowerCase()===n.toLowerCase())){msg('That student already exists.');return}
- ALL.push(n);save();$('inp').value='';msg('');renderList();$('inp').focus()}
+async function addStudent(){const n=$('inp').value.trim().slice(0,40);if(!n){msg('Type a name first.');return}
+ const r=await ArenaDB.add(n);
+ if(!r.ok){msg(errText(r));return}
+ $('inp').value='';msg('');$('inp').focus()}
 
 /* ---------- ronda ---------- */
 function clearArrows(){[nock,flying,stuck].forEach(a=>{if(a&&a.parent)a.parent.remove(a)});nock=flying=stuck=null}
-function toAim(){nock=nock||makeArrow();draw=0;recoil=0;zoom=0;aimLocked=false;aimIdx=-2;busy=false;hl=-1;setPhase('aim');setBtns();drawBoard()}
-function newRound(){token++;busy=false;avail=[...ALL];shown=[...avail];picked=[];hl=-1;clearArrows();wob=0;zoom=0;
+function toAim(){nock=nock||makeArrow();draw=0;recoil=0;zoom=0;aimLocked=false;aimIdx=-2;busy=false;hl=-1;setPhase('aim');setBtns();drawBoard();
+ spinning=true;disc.rotation.z=spinAngle}
+function newRound(){token++;busy=false;avail=[...ALL];shown=[...avail];picked=[];hl=-1;clearArrows();wob=0;zoom=0;spinAngle=0;disc.rotation.z=0;spinning=true;
  $('sel').classList.remove('on');$('banner').className='';hud();aimT.x=aimT.y=0;toAim();
  const tk=token;tween(600,p=>{const b=1+2.7*Math.pow(p-1,3)+1.7*Math.pow(p-1,2);root.scale.setScalar(Math.max(.001,p<1?b:1))},tk)}
 function startGame(){if(!ALL.length){msg('Please add at least one student.');return}round=1;show('game');newRound();sfx('ui')}
@@ -296,7 +353,7 @@ async function shoot(){
  aimLocked=true;const d={x:curDir.x,y:curDir.y,z:curDir.z};
  const o=ALEN-draw*RIG_S,tipS={x:BOW.x+d.x*o,y:BOW.y+d.y*o,z:BOW.z+d.z*o};
  const H0=Aim.intersectPlane(BOW,d,BZ);                                    /* rayo del arco ∩ plano de la diana */
- const plane=H0&&Aim.onBoard(H0.x,H0.y)?BZ:Aim.WALL_Z;                       /* acierto: se clava en la diana · fallo: en la pared */
+ const plane=H0&&Aim.onBoard(H0.x,H0.y)?BZ:Aim.WALL_Z;
  const E=Aim.intersectPlane(BOW,d,plane);
  if(!E){busy=false;aimLocked=false;setPhase('aim');setBtns();return}
  flying=nock;nock=null;sfx('release');sfx('fly');
@@ -306,10 +363,11 @@ async function shoot(){
  if(!await tween(Math.max(260,Math.min(520,L*34)),p=>{const t=Math.pow(p,1.15),h=arcH*4*t*(1-t);
    tipNow={x:tipS.x+(E.x-tipS.x)*t,y:tipS.y+(E.y-tipS.y)*t+h,z:tipS.z+(E.z-tipS.z)*t};
    const sl=arcH*4*(1-2*t)*.5,v={x:E.x-tipS.x,y:E.y-tipS.y+sl,z:E.z-tipS.z},l=Math.hypot(v.x,v.y,v.z);placeArrow(flying,tipNow,{x:v.x/l,y:v.y/l,z:v.z/l});zoom=.4*p},tok))return;
- /* ---- IMPACTO: la flecha termina exactamente sobre el rayo apuntado; el sector sale de dónde quedó la punta ---- */
+ /* ---- IMPACTO: la ruleta se detiene en este instante exacto ---- */
+ spinning=false;
  placeArrow(flying,{x:E.x+d.x*.08,y:E.y+d.y*.08,z:E.z+d.z*.08},d);
- const tb=(BZ-E.z)/d.z,hit={x:E.x+d.x*tb,y:E.y+d.y*tb};   /* la punta (y su dirección) proyectada en la cara de la diana */
- const idx=Aim.sectorAt(hit.x,hit.y,shown.length);
+ const tb=(BZ-E.z)/d.z,hit={x:E.x+d.x*tb,y:E.y+d.y*tb};   /* la punta proyectada en la cara de la diana */
+ const idx=sectorAtWithSpin(hit.x,hit.y,shown.length);
  wob=.16;sfx('hit');burst(E.x,E.y,E.z+.6,idx>=0?30:14,5);
  if(idx<0){ /* ---------- FALLO: no se elimina a nadie ---------- */
   sfx('miss');if(!await banner('MISSED!','miss',1300,tok))return;
@@ -340,7 +398,7 @@ function toMenu(){token++;busy=false;sfx('ui');location.href='../../index.html?b
 
 /* ---------- wiring ---------- */
 $('play').onclick=()=>{renderList();show('students');sfx('ui')};
-$('add').onclick=addStudent;$('inp').addEventListener('keydown',e=>{if(e.key==='Enter')addStudent()});
+$('add').onclick=addStudent;$('inp').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addStudent()}});
 $('useq').onchange=e=>{useQ=e.target.checked;save()};
 $('startG').onclick=startGame;
 ['toMenu1','toMenu2','toMenu3'].forEach(i=>$(i).onclick=toMenu);
@@ -350,6 +408,6 @@ $('again').onclick=()=>{round++;show('game');newRound();sfx('ui')};
 $('snd').onclick=()=>{muted=!muted;$('snd').textContent=muted?'🔇':'🔊';save();sfx('ui')};
 load();$('snd').textContent=muted?'🔇':'🔊';renderList();
 /* lectura para depuración/pruebas (no modifica nada) */
-window.StudentDartDebug={state:()=>({ALL:[...ALL],avail:[...avail],shown:[...shown],picked:picked.map(p=>p.name),phase,busy,round,aim:{x:aimT.x,y:aimT.y},idx:Aim.sectorAt(aimT.x,aimT.y,shown.length),camZ,aspect}),boardPNG:()=>cv.toDataURL('image/png')};
+window.StudentDartDebug={state:()=>({ALL:[...ALL],avail:[...avail],shown:[...shown],picked:picked.map(p=>p.name),phase,busy,round,aim:{x:aimT.x,y:aimT.y},idx:sectorAtWithSpin(aimT.x,aimT.y,shown.length),camZ,aspect,spinAngle}),boardPNG:()=>cv.toDataURL('image/png')};
 })();
 </script></body></html>

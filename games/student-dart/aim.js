@@ -60,12 +60,14 @@
       return { x: o.x + d.x * t, y: o.y + d.y * t, z: zPlane, t };
     },
     onBoard(x, y) { return Math.hypot(x, y) <= A.BOARD_R; },
-    /* Sector (0…n−1) que contiene el punto (x,y) de la diana, o −1 si cae fuera de ella. */
-    sectorAt(x, y, n) {
+    /* Sector (0…n−1) que contiene el punto (x,y) de la diana (con rotación opcional spinAngle), o −1 si cae fuera de ella. */
+    sectorAt(x, y, n, spinAngle = 0) {
       if (!(n > 0) || !isFinite(x) || !isFinite(y) || Math.hypot(x, y) > A.BOARD_R) return -1;
       if (x === 0 && y === 0) return 0;
+      const cs = Math.cos(-spinAngle), sn = Math.sin(-spinAngle);
+      const rx = x * cs - y * sn, ry = x * sn + y * cs;
       const d = TAU / n;
-      let a = (Math.atan2(y, x) - A.PHI0) % TAU; if (a < 0) a += TAU;
+      let a = (Math.atan2(ry, rx) - A.PHI0) % TAU; if (a < 0) a += TAU;
       return Math.min(n - 1, Math.floor(a / d));
     },
     /* Ángulo (rad, mundo) del centro del sector i de n. */

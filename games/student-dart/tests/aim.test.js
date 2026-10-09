@@ -47,4 +47,14 @@ assert.strictEqual(A.intersectPlane({ x: 0, y: 0, z: 5 }, { x: 0, y: 0, z: 1 }, 
 /* 6. distribución: si se apunta uniformemente a la diana, cada sector recibe ~1/n (no hay sectores "imposibles") */
 { const n = 7, c = Array(n).fill(0); let N = 0; while (N < 70000) { const x = rnd(-3, 3), y = rnd(-3, 3); if (Math.hypot(x, y) > 3) continue; c[A.sectorAt(x, y, n)]++; N++; }
   c.forEach((v) => assert(Math.abs(v / N - 1 / n) < .01, 'sector area share')); }
-console.log(`OK — ${shots} disparos simulados (${hits} aciertos, ${misses} fallos); sectores 1..40 verificados.`);
+/* 7. rotación de la ruleta (spinAngle): rotar la diana desplaza los sectores de forma coherente */
+for (let n = 2; n <= 20; n++) {
+  const d = Math.PI * 2 / n;
+  for (let s = 0; s < n; s++) {
+    // Si la diana gira spinAngle = s * d, el sector s debe encontrarse donde originalmente estaba el sector 0 (arriba)
+    const mid0 = A.sectorMid(0, n);
+    const x = 2 * Math.cos(mid0 + s * d), y = 2 * Math.sin(mid0 + s * d);
+    assert.strictEqual(A.sectorAt(x, y, n, s * d), 0, `spin shift: n=${n} s=${s}`);
+  }
+}
+console.log(`OK — ${shots} disparos simulados (${hits} aciertos, ${misses} fallos); sectores 1..40 y rotación verificados.`);
